@@ -1985,6 +1985,145 @@
     box-shadow: 0 0 0 2.5px rgba(22, 199, 161, .2);
   }
 
+  /* ===== 4.1 两条理解轴 · 象限内嵌（浅色卡片）===== */
+  .axis-quadrant-embed {
+    margin: 14px 0 18px;
+    max-width: min(520px, 100%);
+  }
+  .axis-quadrant-embed .aq-frame {
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    gap: 0;
+    padding: 14px 16px 12px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--line);
+    background:
+      radial-gradient(380px 180px at 18% 0%, rgba(14, 165, 233, .07), transparent 55%),
+      radial-gradient(360px 170px at 92% 100%, rgba(124, 58, 237, .06), transparent 55%),
+      linear-gradient(180deg, #f8fafc, #eef2f7);
+    box-shadow: var(--shadow-sm);
+  }
+  .axis-quadrant-embed .aq-y-wrap {
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    flex-shrink: 0;
+    padding-right: 8px;
+    margin-right: 2px;
+  }
+  .axis-quadrant-embed .aq-y-dash {
+    width: 0;
+    margin-left: 8px;
+    border-left: 1px dashed var(--line-strong);
+    align-self: stretch;
+    min-height: 88px;
+  }
+  .axis-quadrant-embed .aq-y-label {
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    color: var(--muted);
+    line-height: 1.5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .axis-quadrant-embed .aq-right {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .axis-quadrant-embed .aq-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .axis-quadrant-embed .aq-card {
+    margin: 0;
+    padding: 11px 12px;
+    border-radius: 10px;
+    background: #fff;
+    border: 1px solid var(--line);
+    box-shadow: 0 3px 12px rgba(15, 23, 42, .045);
+  }
+  .axis-quadrant-embed .aq-card h5 {
+    margin: 0 0 5px;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: .02em;
+  }
+  .axis-quadrant-embed .aq-card p {
+    margin: 0;
+    font-size: 12px;
+    color: var(--text-soft);
+    line-height: 1.45;
+  }
+  .axis-quadrant-embed .aq-card .aq-sub {
+    display: block;
+    margin-top: 4px;
+    font-size: 11px;
+    color: var(--muted);
+  }
+  .axis-quadrant-embed .aq-x-label {
+    text-align: center;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    padding-top: 2px;
+  }
+  @media (max-width: 640px) {
+    .axis-quadrant-embed .aq-frame { flex-direction: column; padding: 12px; }
+    .axis-quadrant-embed .aq-y-wrap {
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      padding-right: 0;
+      margin-right: 0;
+      margin-bottom: 8px;
+      gap: 10px;
+    }
+    .axis-quadrant-embed .aq-y-dash {
+      display: none;
+    }
+    .axis-quadrant-embed .aq-y-label {
+      writing-mode: horizontal-tb;
+      letter-spacing: .06em;
+    }
+  }
+
+  /* ===== 02 治理规范 · 与 index-training-visual 同款（viz-*）===== */
+  .viz-gov-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 12px 0; }
+  @media (max-width: 720px) { .viz-gov-grid { grid-template-columns: 1fr; } }
+  .viz-gov-block { padding: 14px; border-radius: var(--radius-md); border: 1px solid var(--line); background: var(--panel); }
+  .viz-gov-block h4 { margin: 0 0 8px; font-size: 14px; }
+  .viz-gov-block.deny h4 { color: var(--danger); }
+  .viz-gov-block.allow h4 { color: var(--accent-3); }
+  .viz-gov-block ol { margin: 0; padding-left: 18px; font-size: 13px; color: var(--text-soft); }
+  .viz-rubric {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 10px;
+    margin: 12px 0;
+  }
+  .viz-rubric span {
+    display: block;
+    padding: 10px 12px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--line);
+    background: linear-gradient(180deg, rgba(124, 58, 237, 0.04), #fff);
+    font-size: 12px;
+    color: var(--text-soft);
+    line-height: 1.45;
+  }
+  .viz-rubric strong { display: block; color: var(--accent-2); margin-bottom: 4px; font-size: 13px; }
+
   /* ===== Responsive ===== */
   @media (max-width: 980px) {
     .shell { grid-template-columns: 1fr; padding: 20px; gap: 20px; }
@@ -2042,7 +2181,7 @@
         <li class="sub"><a href="#p3-2"><span class="idx">3.2</span><span>角色分工</span></a></li>
 
         <li><a href="#p4"><span class="idx">P4</span><span>我的 AI Agent teams</span></a></li>
-        <li class="sub"><a href="#p4-1"><span class="idx">4.1</span><span>两条理解轴</span></a></li>
+        <li class="sub"><a href="#p4-1"><span class="idx">4.1</span><span>两条理解轴（象限）</span></a></li>
         <li class="sub"><a href="#p4-2"><span class="idx">4.2</span><span>5 层协作体系</span></a></li>
         <li class="sub"><a href="#p4-3"><span class="idx">4.3</span><span>Skill / MCP / Agent / 知识库</span></a></li>
 
@@ -2132,7 +2271,6 @@
 
       <h3 class="chapter-h" id="p1"><span class="num">P1</span>写在前面</h3>
       <h4 class="sub-heading" id="p1-1"><span class="num">1.1</span>不是提示词技巧课，而是工作系统课</h4>
-      <p>大家好，今天分享的主题是 <strong>AI PM Builder OS</strong>——把 AI 装配成产品经理的长期工作系统，副标题是「如何借助 AI 进行产品工作提效」。</p>
       <p>先把这次分享的边界讲清楚：这不是一场提示词技巧课，也不是工具安利课。我们不只讨论怎么让 AI 写一段更好看的文案，而是讨论产品经理如何把 AI 变成一个能长期协作的工作系统（合作伙伴 / 个人助理）。</p>
       <p>产品经理的日常工作很复杂：要看资料、懂业务、写需求、做原型、跟研发沟通、盯上线、做复盘。AI 真正有价值的地方，是把这些环节串起来，让我们更快进入判断和决策，而不是陷在重复劳动里。</p>
 
@@ -2257,8 +2395,40 @@ flowchart LR
       </div>
 
       <h3 class="chapter-h" id="p4"><span class="num">P4</span>我的 AI Agent teams</h3>
-      <h4 class="sub-heading" id="p4-1"><span class="num">4.1</span>两条理解轴</h4>
-      <p>AI 工具不按品牌背诵，而是按两条轴来理解：</p>
+      <h4 class="sub-heading" id="p4-1"><span class="num">4.1</span>两条理解轴（象限）</h4>
+      <p>不按品牌背，而按「从辅助到交付」与「从零代码到工程化」两轴组合理解工具。</p>
+      <div class="axis-quadrant-embed" role="img" aria-label="四象限：横轴辅助到交付，纵轴工程化执行向上。A 轻辅助低工程；B 强交付低工程、快速原型；C 轻辅助高工程、复杂项目中的想；D 强交付高工程、IDE 与 Agent 落地。">
+        <div class="aq-frame">
+          <div class="aq-y-wrap">
+            <span class="aq-y-label">工程化执行&nbsp;↑</span>
+            <span class="aq-y-dash" aria-hidden="true"></span>
+          </div>
+          <div class="aq-right">
+            <div class="aq-grid">
+              <article class="aq-card">
+                <h5>象限 A</h5>
+                <p>轻辅助 · 低工程</p>
+              </article>
+              <article class="aq-card">
+                <h5>象限 B</h5>
+                <p>强交付 · 低工程</p>
+                <span class="aq-sub">快速原型</span>
+              </article>
+              <article class="aq-card">
+                <h5>象限 C</h5>
+                <p>轻辅助 · 高工程</p>
+                <span class="aq-sub">复杂项目中的「想」</span>
+              </article>
+              <article class="aq-card">
+                <h5>象限 D</h5>
+                <p>强交付 · 高工程</p>
+                <span class="aq-sub">IDE / Agent 落地</span>
+              </article>
+            </div>
+            <div class="aq-x-label">辅助 → 交付</div>
+          </div>
+        </div>
+      </div>
       <ol>
         <li><code>从辅助到交付</code><br>有的工具只是帮你想、帮你写、帮你总结；有的工具已经能真正进入项目、改文件、跑任务、交付结果。</li>
         <li><code>从零代码到工程化执行</code><br>有的工具更适合无代码、设计到代码、快速原型；有的工具更适合专业开发、复杂项目和长期迭代。</li>

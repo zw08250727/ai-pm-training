@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>资源中心 · AI PM Builder OS</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23101828'/%3E%3Cpath d='M18 40 28 16h8l10 24h-7l-2-5H27l-2 5h-7Zm11-11h6l-3-8-3 8Z' fill='%23fff'/%3E%3Cpath d='M18 47h28' stroke='%2300a878' stroke-width='5' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0a0e17;
+  --bg-soft: #111827;
+  --panel: #1a2332;
+  --panel-hover: #243044;
+  --line: #2a3a52;
+  --text: #f1f5f9;
+  --text-soft: #94a3b8;
+  --muted: #64748b;
+  --accent: #38bdf8;
+  --accent-2: #a78bfa;
+  --accent-3: #34d399;
+  --warn: #fbbf24;
+  --danger: #f87171;
+  --shadow-lg: 0 25px 50px rgba(0,0,0,.5);
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Noto Sans SC', 'Space Grotesk', sans-serif;
+  font-size: 15px;
+  line-height: 1.8;
+  min-height: 100vh;
+}
+::selection { background: var(--accent); color: var(--bg); }
+
+/* Hero */
+.hero {
+  min-height: 50vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 80px 24px 60px;
+  background:
+    radial-gradient(ellipse 800px 600px at 50% -10%, rgba(56,189,248,.12), transparent 70%),
+    radial-gradient(ellipse 600px 400px at 80% 50%, rgba(167,139,250,.08), transparent 60%),
+    var(--bg);
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+}
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 20px;
+  background: rgba(56,189,248,.1);
+  border: 1px solid rgba(56,189,248,.2);
+  border-radius: 100px;
+  font-size: 13px;
+  color: var(--accent);
+  margin-bottom: 32px;
+  animation: fadeInDown .6s ease-out;
+}
+.hero-badge svg { width: 16px; height: 16px; }
+.hero h1 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: clamp(2.5rem, 6vw, 4.5rem);
+  font-weight: 700;
+  letter-spacing: -.03em;
+  line-height: 1.1;
+  margin-bottom: 20px;
+  animation: fadeInUp .6s ease-out .1s both;
+}
+.hero h1 span {
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.hero p {
+  color: var(--text-soft);
+  font-size: 1.1rem;
+  max-width: 520px;
+  animation: fadeInUp .6s ease-out .2s both;
+}
+.hero-stats {
+  display: flex;
+  gap: 48px;
+  margin-top: 48px;
+  animation: fadeInUp .6s ease-out .3s both;
+}
+.stat {
+  text-align: center;
+}
+.stat-num {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--accent);
+}
+.stat-label {
+  font-size: .85rem;
+  color: var(--muted);
+  margin-top: 4px;
+}
+
+/* Container */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px 80px;
+}
+
+/* Section */
+.section {
+  margin-top: 64px;
+}
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 32px;
+}
+.section-icon {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  border-radius: var(--radius-md);
+  box-shadow: 0 8px 24px rgba(56,189,248,.25);
+}
+.section-icon svg { width: 24px; height: 24px; color: var(--bg); }
+.section-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1.75rem;
+  font-weight: 700;
+}
+.section-subtitle {
+  color: var(--muted);
+  font-size: .9rem;
+  margin-top: 4px;
+}
+
+/* Grid */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 20px;
+}
+
+/* Card */
+.card {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  transition: all .3s cubic-bezier(.4,0,.2,1);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+  opacity: 0;
+  transition: opacity .3s;
+}
+.card:hover {
+  border-color: var(--accent);
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg), 0 0 40px rgba(56,189,248,.1);
+}
+.card:hover::before { opacity: 1; }
+.card-icon {
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  margin-bottom: 16px;
+}
+.card-icon svg { width: 22px; height: 22px; }
+.card-icon.doc { background: rgba(56,189,248,.15); color: var(--accent); }
+.card-icon.html { background: rgba(167,139,250,.15); color: var(--accent-2); }
+.card-icon.img { background: rgba(52,211,153,.15); color: var(--accent-3); }
+.card h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+  line-height: 1.4;
+}
+.card p {
+  font-size: .85rem;
+  color: var(--muted);
+  margin-bottom: 16px;
+}
+.card-meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: .75rem;
+  color: var(--muted);
+}
+.card-meta span {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.card-meta svg { width: 14px; height: 14px; }
+
+/* Image Grid */
+.image-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+.image-card {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  transition: all .3s;
+}
+.image-card:hover {
+  border-color: var(--accent);
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+}
+.image-card img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  display: block;
+}
+.image-info {
+  padding: 16px;
+}
+.image-info h4 {
+  font-size: .9rem;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+.image-info p {
+  font-size: .75rem;
+  color: var(--muted);
+}
+
+/* Modal */
+.modal {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,.85);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
+  transition: all .3s;
+  padding: 24px;
+}
+.modal.active { opacity: 1; visibility: visible; }
+.modal-content {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  max-width: 900px;
+  width: 100%;
+  max-height: 85vh;
+  overflow: auto;
+  position: relative;
+  transform: scale(.95) translateY(20px);
+  transition: transform .3s;
+}
+.modal.active .modal-content { transform: scale(1) translateY(0); }
+.modal-header {
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  background: var(--panel);
+  z-index: 10;
+}
+.modal-header h3 { font-size: 1.1rem; font-weight: 600; }
+.modal-close {
+  width: 36px; height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-soft);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all .2s;
+  color: var(--text-soft);
+}
+.modal-close:hover { background: var(--panel-hover); color: var(--text); }
+.modal-body { padding: 24px; }
+
+/* Markdown Content */
+.markdown-body {
+  font-size: .95rem;
+  line-height: 1.8;
+  color: var(--text-soft);
+}
+.markdown-body h1,.markdown-body h2,.markdown-body h3 {
+  color: var(--text);
+  margin: 1.5em 0 .75em;
+  font-weight: 600;
+}
+.markdown-body h1 { font-size: 1.5rem; }
+.markdown-body h2 { font-size: 1.25rem; border-bottom: 1px solid var(--line); padding-bottom: .5em; }
+.markdown-body h3 { font-size: 1.1rem; }
+.markdown-body p { margin-bottom: 1em; }
+.markdown-body ul,.markdown-body ol { margin: 1em 0; padding-left: 1.5em; }
+.markdown-body li { margin-bottom: .5em; }
+.markdown-body code {
+  background: var(--bg);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: .85em;
+  color: var(--accent);
+}
+.markdown-body pre {
+  background: var(--bg);
+  padding: 16px;
+  border-radius: var(--radius-sm);
+  overflow-x: auto;
+  margin: 1em 0;
+}
+.markdown-body pre code {
+  background: none;
+  padding: 0;
+  color: var(--text-soft);
+}
+.markdown-body blockquote {
+  border-left: 3px solid var(--accent);
+  padding-left: 16px;
+  margin: 1em 0;
+  color: var(--muted);
+}
+.markdown-body a { color: var(--accent); }
+.markdown-body a:hover { text-decoration: underline; }
+.markdown-body table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1em 0;
+}
+.markdown-body th,.markdown-body td {
+  border: 1px solid var(--line);
+  padding: 8px 12px;
+  text-align: left;
+}
+.markdown-body th { background: var(--bg); font-weight: 600; }
+
+/* HTML Viewer */
+.html-viewer {
+  background: var(--bg);
+  border-radius: var(--radius-sm);
+  padding: 16px;
+  max-height: 60vh;
+  overflow: auto;
+}
+
+/* Footer */
+.footer {
+  text-align: center;
+  padding: 40px 24px;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-size: .85rem;
+}
+.footer a { color: var(--accent); }
+
+/* Animations */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeInDown {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .hero-stats { gap: 24px; }
+  .stat-num { font-size: 1.5rem; }
+  .grid { grid-template-columns: 1fr; }
+  .image-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="hero-badge">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+    AI PM Builder OS
+  </div>
+  <h1>资源<span>中心</span></h1>
+  <p>AI产品经理提效培训课程的全部资料、案例文档和设计会话记录</p>
+  <div class="hero-stats">
+    <div class="stat">
+      <div class="stat-num">3</div>
+      <div class="stat-label">Markdown文档</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">2</div>
+      <div class="stat-label">设计会话</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">3</div>
+      <div class="stat-label">产品截图</div>
+    </div>
+  </div>
+</section>
+
+<!-- Main Content -->
+<div class="container">
+
+  <!-- Documents Section -->
+  <section class="section">
+    <div class="section-header">
+      <div class="section-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+      </div>
+      <div>
+        <h2 class="section-title">文档资料</h2>
+        <p class="section-subtitle">产品分析报告、演讲稿与PPT大纲</p>
+      </div>
+    </div>
+    <div class="grid" id="doc-grid"></div>
+  </section>
+
+  <!-- Sessions Section -->
+  <section class="section">
+    <div class="section-header">
+      <div class="section-icon" style="background: linear-gradient(135deg, var(--accent-2), var(--accent-3));">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+      </div>
+      <div>
+        <h2 class="section-title">AI设计会话</h2>
+        <p class="section-subtitle">Cursor中的核心设计对话记录</p>
+      </div>
+    </div>
+    <div class="grid" id="session-grid"></div>
+  </section>
+
+  <!-- Images Section -->
+  <section class="section">
+    <div class="section-header">
+      <div class="section-icon" style="background: linear-gradient(135deg, var(--accent-3), var(--warn));">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+      </div>
+      <div>
+        <h2 class="section-title">产品截图</h2>
+        <p class="section-subtitle">培训过程中展示的界面截图</p>
+      </div>
+    </div>
+    <div class="image-grid" id="image-grid"></div>
+  </section>
+
+</div>
+
+<!-- Modal -->
+<div class="modal" id="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3 id="modal-title">文档</h3>
+      <button class="modal-close" onclick="closeModal()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body" id="modal-body"></div>
+  </div>
+</div>
+
+<footer class="footer">
+  <p>AI PM Builder OS · <a href="index.html">返回主站</a></p>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script>
+// Resource Data
+const docs = [
+  {
+    title: '百融百智产品分析报告',
+    file: 'assets/百融百智_产品分析报告_20260306.md',
+    date: '2026-03-06',
+    size: 'Markdown'
+  },
+  {
+    title: '百融百智产品分析报告 - 演讲稿',
+    file: 'assets/百融百智_产品分析报告_演讲稿_20260306.md',
+    date: '2026-03-06',
+    size: 'Markdown'
+  },
+  {
+    title: '百融百智产品分析报告 - PPT大纲',
+    file: 'assets/百融百智_产品分析报告_PPT大纲_20260306.md',
+    date: '2026-03-06',
+    size: 'Markdown'
+  }
+];
+
+const sessions = [
+  {
+    title: '百销核心设计会话',
+    file: 'assets/百销_核心设计会话_Cursor.html',
+    date: '2026-03-06',
+    size: 'HTML'
+  },
+  {
+    title: '百智企业知识库设计会话',
+    file: 'assets/百智_企业知识库设计会话_Cursor.html',
+    date: '2026-03-06',
+    size: 'HTML'
+  }
+];
+
+const images = [
+  {
+    title: '产品界面截图 01',
+    file: 'assets/Pasted image 20260424114840.png',
+    desc: '百融百智产品主界面'
+  },
+  {
+    title: '产品界面截图 02',
+    file: 'assets/Pasted image 20260424115012.png',
+    desc: '核心功能模块'
+  },
+  {
+    title: '产品界面截图 03',
+    file: 'assets/Pasted image 20260424181841.png',
+    desc: '工作流配置页面'
+  }
+];
+
+// Render Cards
+function renderDocs() {
+  const grid = document.getElementById('doc-grid');
+  grid.innerHTML = docs.map((doc, i) => `
+    <div class="card" onclick="openDoc(${i})" style="animation: fadeInUp .5s ease-out ${i * .1}s both;">
+      <div class="card-icon doc">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      </div>
+      <h3>${doc.title}</h3>
+      <p>完整的产品分析报告文档，包含市场分析、竞品研究和产品规划建议</p>
+      <div class="card-meta">
+        <span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          ${doc.date}
+        </span>
+        <span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          查看详情
+        </span>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderSessions() {
+  const grid = document.getElementById('session-grid');
+  grid.innerHTML = sessions.map((s, i) => `
+    <div class="card" onclick="openSession(${i})" style="animation: fadeInUp .5s ease-out ${i * .1}s both;">
+      <div class="card-icon html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+      </div>
+      <h3>${s.title}</h3>
+      <p>AI辅助设计过程中的完整对话记录，展示了如何用AI工具优化产品设计</p>
+      <div class="card-meta">
+        <span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          ${s.date}
+        </span>
+        <span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          查看详情
+        </span>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderImages() {
+  const grid = document.getElementById('image-grid');
+  grid.innerHTML = images.map((img, i) => `
+    <div class="image-card" onclick="openImage(${i})" style="animation: fadeInUp .5s ease-out ${i * .1}s both;">
+      <img src="${img.file}" alt="${img.title}" loading="lazy">
+      <div class="image-info">
+        <h4>${img.title}</h4>
+        <p>${img.desc}</p>
+      </div>
+    </div>
+  `).join('');
+}
+
+// Modal Functions
+async function openDoc(index) {
+  const doc = docs[index];
+  document.getElementById('modal-title').textContent = doc.title;
+  const modalBody = document.getElementById('modal-body');
+  modalBody.innerHTML = '<div style="text-align:center;padding:40px;color:var(--muted);">加载中...</div>';
+  document.getElementById('modal').classList.add('active');
+  try {
+    const res = await fetch(doc.file);
+    const text = await res.text();
+    modalBody.innerHTML = `<div class="markdown-body">${marked.parse(text)}</div>`;
+  } catch (e) {
+    modalBody.innerHTML = '<div style="color:var(--danger);padding:20px;">加载失败，请稍后重试</div>';
+  }
+}
+
+async function openSession(index) {
+  const s = sessions[index];
+  document.getElementById('modal-title').textContent = s.title;
+  const modalBody = document.getElementById('modal-body');
+  modalBody.innerHTML = '<div style="text-align:center;padding:40px;color:var(--muted);">加载中...</div>';
+  document.getElementById('modal').classList.add('active');
+  try {
+    const res = await fetch(s.file);
+    const text = await res.text();
+    modalBody.innerHTML = `<div class="html-viewer">${text}</div>`;
+  } catch (e) {
+    modalBody.innerHTML = '<div style="color:var(--danger);padding:20px;">加载失败，请稍后重试</div>';
+  }
+}
+
+function openImage(index) {
+  const img = images[index];
+  document.getElementById('modal-title').textContent = img.title;
+  const modalBody = document.getElementById('modal-body');
+  modalBody.innerHTML = `<img src="${img.file}" alt="${img.title}" style="width:100%;border-radius:8px;">`;
+  document.getElementById('modal').classList.add('active');
+}
+
+function closeModal() {
+  document.getElementById('modal').classList.remove('active');
+}
+
+document.getElementById('modal').addEventListener('click', (e) => {
+  if (e.target.id === 'modal') closeModal();
+});
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') closeModal();
+});
+
+// Init
+renderDocs();
+renderSessions();
+renderImages();
+</script>
+</body>
+</html>

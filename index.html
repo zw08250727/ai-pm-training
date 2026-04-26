@@ -1,0 +1,3505 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI PM Builder OS · 把 AI 装配成产品经理的长期工作系统</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23101828'/%3E%3Cpath d='M18 40 28 16h8l10 24h-7l-2-5H27l-2 5h-7Zm11-11h6l-3-8-3 8Z' fill='%23fff'/%3E%3Cpath d='M18 47h28' stroke='%2300a878' stroke-width='5' stroke-linecap='round'/%3E%3C/svg%3E">
+
+<style>
+  :root {
+    --bg: #f7f8fb;
+    --bg-soft: #eef2f7;
+    --panel: #ffffff;
+    --panel-2: #fafbfd;
+    --line: #e3e8ef;
+    --line-strong: #cbd5e1;
+    --text: #0f172a;
+    --text-soft: #334155;
+    --muted: #64748b;
+    --accent: #0ea5e9;
+    --accent-2: #7c3aed;
+    --accent-3: #16c7a1;
+    --warn: #f59e0b;
+    --danger: #ef4444;
+    --code-bg: #0f172a;
+    --code-text: #e2e8f0;
+    --shadow-sm: 0 1px 2px rgba(15, 23, 42, .04), 0 1px 1px rgba(15, 23, 42, .02);
+    --shadow-md: 0 8px 24px rgba(15, 23, 42, .06), 0 2px 6px rgba(15, 23, 42, .04);
+    --shadow-lg: 0 20px 50px rgba(15, 23, 42, .08);
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --radius-xl: 22px;
+    --mono: "SFMono-Regular", "SF Mono", "Menlo", "Monaco", "JetBrains Mono", Consolas, monospace;
+    --body: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Segoe UI", Roboto, sans-serif;
+    --serif: "Songti SC", "STSong", "Noto Serif CJK SC", "Iowan Old Style", Georgia, serif;
+  }
+
+  * { box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    margin: 0;
+    background:
+      radial-gradient(1200px 600px at 0% -10%, rgba(14, 165, 233, .08), transparent 60%),
+      radial-gradient(900px 500px at 100% 0%, rgba(124, 58, 237, .06), transparent 60%),
+      var(--bg);
+    color: var(--text);
+    font-family: var(--body);
+    font-size: 15px;
+    line-height: 1.75;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  code, pre, kbd, samp { font-family: var(--mono); }
+
+  /* ===== Progress bar ===== */
+  .progress {
+    position: fixed; left: 0; top: 0; height: 3px; width: 0;
+    background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    z-index: 100;
+    transition: width .12s ease;
+    box-shadow: 0 0 12px rgba(14, 165, 233, .35);
+  }
+
+  /* ===== Top bar ===== */
+  .topbar {
+    position: sticky; top: 0; z-index: 40;
+    background: rgba(255, 255, 255, .85);
+    backdrop-filter: saturate(180%) blur(14px);
+    -webkit-backdrop-filter: saturate(180%) blur(14px);
+    border-bottom: 1px solid var(--line);
+  }
+  .topbar-inner {
+    max-width: 1280px; margin: 0 auto;
+    padding: 12px 24px;
+    display: flex; align-items: center; gap: 24px;
+  }
+  .brand {
+    display: inline-flex; align-items: center; gap: 10px;
+    font-weight: 700; letter-spacing: .02em; color: var(--text);
+  }
+  .brand .dot {
+    width: 10px; height: 10px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    box-shadow: 0 0 0 3px rgba(14, 165, 233, .12);
+  }
+  .brand small {
+    color: var(--muted); font-weight: 500; margin-left: 4px;
+    border-left: 1px solid var(--line); padding-left: 10px;
+  }
+  .brand-tag {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-family: var(--body);
+    font-size: 12.5px;
+    color: var(--muted);
+    font-weight: 500;
+    background: transparent;
+    border: none;
+    border-left: 1px solid var(--line);
+    padding: 0 0 0 12px;
+    margin-left: 6px;
+    cursor: pointer;
+    transition: color .18s ease;
+  }
+  .brand-tag .info-i {
+    width: 14px; height: 14px;
+    border-radius: 50%;
+    border: 1.2px solid currentColor;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-family: var(--mono);
+    font-size: 9.5px;
+    line-height: 1;
+    font-style: italic;
+    font-weight: 600;
+    opacity: .65;
+    transition: opacity .18s ease;
+  }
+  .brand-tag:hover {
+    color: var(--accent-2);
+  }
+  .brand-tag:hover .info-i {
+    opacity: 1;
+  }
+  .brand-tag .label {
+    border-bottom: 1px dashed currentColor;
+    padding-bottom: 1px;
+    opacity: .9;
+  }
+  .brand-tag:hover .label { opacity: 1; }
+  .topnav {
+    display: flex; flex: 1; gap: 4px; overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .topnav::-webkit-scrollbar { display: none; }
+  .topnav a {
+    color: var(--text-soft);
+    font-size: 13px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    white-space: nowrap;
+    transition: background .15s, color .15s;
+  }
+  .topnav a:hover { background: var(--bg-soft); color: var(--text); text-decoration: none; }
+  .topnav a.active { background: var(--text); color: #fff; }
+
+  /* ===== Layout shell ===== */
+  .shell {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 32px 24px 96px;
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    gap: 40px;
+    align-items: start;
+  }
+
+  /* ===== Sidebar TOC ===== */
+  .sidebar {
+    position: sticky; top: 76px;
+    max-height: calc(100vh - 96px);
+    overflow-y: auto;
+    padding: 18px 14px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    background: var(--panel);
+    box-shadow: var(--shadow-sm);
+    font-size: 13.5px;
+  }
+  .sidebar h4 {
+    margin: 0 0 8px; padding: 0 6px;
+    font-size: 11px; letter-spacing: .12em;
+    color: var(--muted); text-transform: uppercase;
+    font-weight: 600;
+  }
+  .sidebar h4.sidebar-heading-link {
+    margin: 10px 0 0;
+    padding: 0 6px;
+  }
+  .sidebar h4.sidebar-heading-link a {
+    display: block;
+    margin: 0 -2px;
+    padding: 6px 8px;
+    border-radius: 8px;
+    font-size: 11px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    font-weight: 600;
+    color: var(--muted);
+    text-decoration: none;
+    line-height: 1.35;
+  }
+  .sidebar h4.sidebar-heading-link a:hover {
+    background: var(--bg-soft);
+    color: var(--text);
+  }
+  .sidebar h4.sidebar-heading-link a.active {
+    background: linear-gradient(90deg, rgba(14,165,233,.10), rgba(124,58,237,.06));
+    color: var(--text);
+  }
+  .sidebar ul { list-style: none; padding: 0; margin: 0 0 14px; }
+  .sidebar a {
+    display: flex; gap: 8px; align-items: baseline;
+    padding: 6px 8px; border-radius: 8px;
+    color: var(--text-soft);
+    line-height: 1.4;
+  }
+  .sidebar a:hover { background: var(--bg-soft); color: var(--text); text-decoration: none; }
+  .sidebar a.active {
+    background: linear-gradient(90deg, rgba(14,165,233,.10), rgba(124,58,237,.06));
+    color: var(--text); font-weight: 600;
+  }
+  .sidebar a .idx {
+    font-family: var(--mono); font-size: 11px;
+    color: var(--muted);
+    min-width: 28px;
+  }
+  .sidebar .group + .group { border-top: 1px dashed var(--line); padding-top: 10px; margin-top: 10px; }
+  .sidebar li.sub a {
+    padding-left: 30px;
+    color: var(--muted);
+    font-size: 12.5px;
+  }
+  .sidebar li.sub a:hover { color: var(--text); }
+  .sidebar li.sub a .idx {
+    color: var(--accent-2);
+    opacity: .7;
+    font-size: 10.5px;
+    min-width: 26px;
+  }
+  .sidebar li.sub a.active {
+    background: rgba(124, 58, 237, .07);
+    color: var(--text);
+  }
+
+  /* ===== Community / Co-create CTA section ===== */
+  .community {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-xl);
+    padding: 30px 32px 32px;
+    margin-bottom: 28px;
+    box-shadow: var(--shadow-sm);
+    position: relative;
+    overflow: hidden;
+    scroll-margin-top: 88px;
+  }
+  .community-header {
+    display: flex; align-items: baseline; gap: 14px;
+    margin-bottom: 18px; padding-bottom: 14px;
+    border-bottom: 1px dashed var(--line);
+  }
+  .community-header .num {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent-2);
+    background: rgba(124, 58, 237, .08);
+    padding: 4px 10px;
+    border-radius: 999px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+  }
+  .community-header h2 {
+    margin: 0;
+    font-family: var(--serif);
+    font-size: 26px;
+    letter-spacing: -.005em;
+  }
+  .community-header .lede {
+    margin-left: auto; max-width: 380px;
+    color: var(--muted); font-size: 13px;
+    text-align: right;
+  }
+  .cta-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  .cta-card {
+    position: relative;
+    border-radius: 16px;
+    padding: 24px 26px 22px;
+    border: 1px solid var(--line);
+    background: linear-gradient(180deg, #ffffff, #f8fafc);
+    transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+    overflow: hidden;
+  }
+  .cta-card::after {
+    content: "";
+    position: absolute; right: -40px; top: -40px;
+    width: 160px; height: 160px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(14, 165, 233, .08), transparent 70%);
+    pointer-events: none;
+  }
+  .cta-card.is-share::after {
+    background: radial-gradient(circle, rgba(124, 58, 237, .09), transparent 70%);
+  }
+  .cta-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--line-strong);
+  }
+  .cta-card .cta-tag {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: .14em;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+  }
+  .cta-card.is-share .cta-tag { color: var(--accent-2); }
+  .cta-card .cta-icon {
+    width: 36px; height: 36px;
+    border-radius: 10px;
+    display: inline-flex; align-items: center; justify-content: center;
+    color: #fff;
+    background: linear-gradient(135deg, var(--accent), #38bdf8);
+    box-shadow: 0 4px 10px rgba(14, 165, 233, .3);
+    margin-bottom: 14px;
+  }
+  .cta-card.is-share .cta-icon {
+    background: linear-gradient(135deg, var(--accent-2), var(--accent-3));
+    box-shadow: 0 4px 10px rgba(124, 58, 237, .25);
+  }
+  .cta-card .cta-icon svg { width: 18px; height: 18px; }
+  .cta-card h3 {
+    margin: 0 0 8px;
+    font-family: var(--serif);
+    font-size: 20px;
+    color: var(--text);
+    letter-spacing: -.005em;
+    border-left: none; padding-left: 0;
+    line-height: 1.4;
+  }
+  .cta-card p {
+    margin: 0 0 18px;
+    font-size: 13.5px;
+    color: var(--text-soft);
+    line-height: 1.7;
+  }
+  .cta-card .cta-actions {
+    display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  }
+  .cta-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 9px 16px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #fff;
+    background: var(--text);
+    border: 1px solid var(--text);
+    text-decoration: none;
+    transition: transform .18s ease, background .18s ease;
+  }
+  .cta-btn:hover {
+    transform: translateY(-1px);
+    background: #000;
+    text-decoration: none;
+    color: #fff;
+  }
+  .cta-card.is-share .cta-btn {
+    background: linear-gradient(135deg, var(--accent-2), var(--accent-3));
+    border-color: transparent;
+  }
+  .cta-card.is-share .cta-btn:hover { filter: brightness(1.08); }
+  .cta-card.is-ask .cta-btn {
+    background: linear-gradient(135deg, var(--accent), #0284c7);
+    border-color: transparent;
+  }
+  .cta-btn .arrow { transition: transform .2s; }
+  .cta-btn:hover .arrow { transform: translateX(3px); }
+  .cta-btn-ghost {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 9px 14px;
+    border-radius: 999px;
+    font-size: 12.5px;
+    color: var(--text-soft);
+    background: transparent;
+    border: 1px solid var(--line);
+    text-decoration: none;
+    transition: border-color .18s, color .18s, background .18s;
+  }
+  .cta-btn-ghost:hover {
+    color: var(--text);
+    border-color: var(--line-strong);
+    background: var(--bg-soft);
+    text-decoration: none;
+  }
+
+  /* ===== Inline form (formsubmit.co backed) ===== */
+  .cta-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 4px;
+  }
+  .cta-input {
+    width: 100%;
+    padding: 10px 14px;
+    font-size: 13.5px;
+    font-family: var(--body);
+    color: var(--text);
+    background: rgba(255, 255, 255, .92);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    transition: border-color .18s, box-shadow .18s, background .18s;
+    box-sizing: border-box;
+  }
+  .cta-input::placeholder { color: var(--muted); opacity: .85; }
+  .cta-input:focus {
+    outline: none;
+    border-color: var(--accent);
+    background: #ffffff;
+    box-shadow: 0 0 0 3px rgba(14, 165, 233, .12);
+  }
+  .cta-card.is-share .cta-input:focus {
+    border-color: var(--accent-2);
+    box-shadow: 0 0 0 3px rgba(124, 58, 237, .12);
+  }
+  .cta-textarea {
+    min-height: 92px;
+    line-height: 1.6;
+    resize: vertical;
+    font-family: var(--body);
+  }
+  .cta-select {
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    padding-right: 38px;
+    cursor: pointer;
+  }
+  .cta-form .cta-btn {
+    align-self: flex-start;
+    margin-top: 6px;
+    border: none;
+    cursor: pointer;
+    font-family: var(--body);
+  }
+  .cta-form .cta-btn:disabled {
+    opacity: .6;
+    cursor: not-allowed;
+  }
+  .cta-form-success {
+    margin-top: 6px;
+    padding: 18px 18px;
+    border-radius: 12px;
+    background: linear-gradient(180deg, rgba(22, 199, 161, .08), rgba(22, 199, 161, .02));
+    border: 1px solid rgba(22, 199, 161, .35);
+    color: var(--text);
+    font-size: 14px;
+    line-height: 1.7;
+    display: flex; align-items: flex-start; gap: 10px;
+  }
+  .cta-form-success::before {
+    content: "✓";
+    flex-shrink: 0;
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    background: var(--accent-3);
+    color: #fff;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 700;
+    margin-top: 1px;
+  }
+  .cta-form-success strong { color: var(--accent-3); margin-right: 4px; }
+  .cta-form-error {
+    margin-top: 6px;
+    padding: 12px 14px;
+    border-radius: 10px;
+    background: rgba(239, 68, 68, .06);
+    border: 1px solid rgba(239, 68, 68, .25);
+    color: var(--danger);
+    font-size: 13px;
+  }
+
+  .community-note {
+    margin-top: 16px;
+    font-size: 12px;
+    color: var(--muted);
+    padding: 10px 14px;
+    background: var(--bg-soft);
+    border-radius: 10px;
+    border: 1px dashed var(--line-strong);
+    line-height: 1.6;
+  }
+  .community-note code {
+    background: transparent;
+    color: var(--accent-2);
+    border: none; padding: 0;
+  }
+
+  @media (max-width: 720px) {
+    .community-header { flex-direction: column; align-items: flex-start; gap: 8px; }
+    .community-header .lede { margin-left: 0; text-align: left; max-width: none; }
+    .cta-grid { grid-template-columns: 1fr; }
+    .community { padding: 24px 22px; }
+  }
+
+  /* ===== Vision modal (triggered by brand subtitle) ===== */
+  .vision-backdrop {
+    position: fixed; inset: 0;
+    background: rgba(15, 23, 42, .35);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    z-index: 200;
+    display: flex; align-items: center; justify-content: center;
+    padding: 24px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .25s ease;
+  }
+  .vision-backdrop.is-open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .vision {
+    position: relative;
+    width: min(640px, 100%);
+    max-height: calc(100vh - 48px);
+    overflow-y: auto;
+    border-radius: var(--radius-xl);
+    padding: 40px 44px 36px;
+    background:
+      radial-gradient(700px 280px at 0% 0%, rgba(14, 165, 233, .10), transparent 60%),
+      radial-gradient(640px 260px at 100% 100%, rgba(124, 58, 237, .10), transparent 60%),
+      radial-gradient(500px 240px at 50% 50%, rgba(22, 199, 161, .05), transparent 70%),
+      linear-gradient(180deg, #ffffff, #f4f7fb);
+    border: 1px solid var(--line);
+    box-shadow: 0 30px 80px rgba(15, 23, 42, .25);
+    transform: translateY(8px) scale(.98);
+    transition: transform .3s cubic-bezier(.2, .8, .2, 1);
+  }
+  .vision-backdrop.is-open .vision {
+    transform: translateY(0) scale(1);
+  }
+  .vision::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(2px 2px at 12% 22%, rgba(14, 165, 233, .35), transparent 60%),
+      radial-gradient(1.6px 1.6px at 86% 14%, rgba(124, 58, 237, .4), transparent 60%),
+      radial-gradient(1.4px 1.4px at 30% 78%, rgba(22, 199, 161, .45), transparent 60%),
+      radial-gradient(1.6px 1.6px at 78% 76%, rgba(124, 58, 237, .3), transparent 60%);
+    pointer-events: none;
+    opacity: .9;
+  }
+  .vision-close {
+    position: absolute;
+    top: 14px; right: 14px;
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    border: 1px solid var(--line);
+    background: rgba(255, 255, 255, .8);
+    color: var(--text-soft);
+    display: inline-flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    transition: background .18s, color .18s, border-color .18s;
+    z-index: 3;
+  }
+  .vision-close svg { width: 14px; height: 14px; }
+  .vision-close:hover {
+    color: var(--text);
+    border-color: var(--line-strong);
+    background: #ffffff;
+  }
+  .vision-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--accent-2);
+    padding: 5px 12px;
+    border-radius: 999px;
+    background: rgba(124, 58, 237, .07);
+    border: 1px solid rgba(124, 58, 237, .18);
+    margin-bottom: 22px;
+    position: relative;
+    z-index: 2;
+  }
+  .vision-badge .dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--accent-3);
+    box-shadow: 0 0 0 3px rgba(22, 199, 161, .2);
+    animation: vision-pulse 2.4s ease-in-out infinite;
+  }
+  @keyframes vision-pulse {
+    0%, 100% { box-shadow: 0 0 0 3px rgba(22, 199, 161, .2); }
+    50% { box-shadow: 0 0 0 5px rgba(22, 199, 161, .08); }
+  }
+  .vision-title {
+    margin: 0 0 16px;
+    font-family: var(--serif);
+    font-size: clamp(28px, 3.4vw, 38px);
+    line-height: 1.25;
+    letter-spacing: -.005em;
+    color: var(--text);
+    position: relative;
+    z-index: 2;
+  }
+  .vision-title em {
+    font-style: normal;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .vision-lede {
+    margin: 0 0 28px;
+    max-width: 780px;
+    color: var(--text-soft);
+    font-size: 15px;
+    line-height: 1.85;
+    position: relative;
+    z-index: 2;
+  }
+  .vision-lede strong { color: var(--text); }
+  .vision-roadmap {
+    border-top: 1px dashed var(--line);
+    padding-top: 22px;
+    margin-bottom: 24px;
+    position: relative;
+    z-index: 2;
+  }
+  .vision-roadmap-title {
+    font-family: var(--mono);
+    font-size: 11.5px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 14px;
+  }
+  .vision-roadmap-title em {
+    font-style: normal;
+    color: var(--accent-2);
+    margin-left: 8px;
+    background: rgba(124, 58, 237, .08);
+    padding: 1px 8px;
+    border-radius: 999px;
+    border: 1px solid rgba(124, 58, 237, .18);
+    font-size: 10.5px;
+    letter-spacing: .12em;
+  }
+  .vision-roadmap ul {
+    list-style: none;
+    margin: 0; padding: 0;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px 16px;
+    color: var(--text-soft);
+    font-size: 13.5px;
+  }
+  .vision-roadmap ul li {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 14px;
+    background: rgba(255, 255, 255, .65);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    transition: border-color .2s, transform .2s;
+  }
+  .vision-roadmap ul li:hover {
+    border-color: var(--accent-2);
+    transform: translateY(-1px);
+  }
+  .vision-roadmap ul li::before {
+    content: "◇";
+    color: var(--accent-2);
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+  .vision-actions {
+    display: flex; gap: 12px; flex-wrap: wrap;
+    position: relative;
+    z-index: 2;
+  }
+  .vision-btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 10px 18px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: transform .18s ease, box-shadow .18s ease, border-color .18s, background .18s;
+  }
+  .vision-btn.primary {
+    color: #fff;
+    background: linear-gradient(135deg, var(--accent-2), var(--accent));
+    border: 1px solid transparent;
+    box-shadow: 0 8px 18px rgba(14, 165, 233, .25);
+  }
+  .vision-btn.primary:hover {
+    transform: translateY(-1px);
+    text-decoration: none;
+    box-shadow: 0 12px 24px rgba(14, 165, 233, .32);
+  }
+  .vision-btn.ghost {
+    color: var(--text);
+    background: rgba(255, 255, 255, .8);
+    border: 1px solid var(--line-strong);
+  }
+  .vision-btn.ghost:hover {
+    text-decoration: none;
+    background: #ffffff;
+    border-color: var(--text);
+  }
+  .vision-btn .arrow { transition: transform .2s; }
+  .vision-btn:hover .arrow { transform: translateX(3px); }
+
+  @media (max-width: 720px) {
+    .vision { padding: 28px 22px; }
+    .vision-roadmap ul { grid-template-columns: 1fr; }
+  }
+
+  /* ===== sub-heading numbering inside keynote ===== */
+  section.block .sub-heading {
+    font-size: 17px;
+    margin: 28px 0 10px;
+    padding-left: 12px;
+    border-left: 2px solid var(--accent-2);
+    line-height: 1.45;
+    color: var(--text);
+    font-weight: 600;
+    scroll-margin-top: 88px;
+  }
+  section.block .sub-heading .num {
+    font-family: var(--mono);
+    color: var(--accent-2);
+    margin-right: 10px;
+    font-size: 13.5px;
+    letter-spacing: .03em;
+  }
+  section.block h3.chapter-h {
+    font-size: 22px;
+    margin: 38px 0 16px;
+    padding: 12px 0 12px 16px;
+    border-left: 4px solid var(--accent);
+    background: linear-gradient(90deg, rgba(14, 165, 233, .06), transparent 60%);
+    border-radius: 0 12px 12px 0;
+    line-height: 1.35;
+    scroll-margin-top: 88px;
+  }
+  section.block h3.chapter-h .num {
+    font-family: var(--mono);
+    color: var(--accent);
+    margin-right: 12px;
+    font-size: 17px;
+    letter-spacing: .04em;
+  }
+
+  /* ===== Main column ===== */
+  .main { min-width: 0; }
+
+  .hero {
+    border-radius: var(--radius-xl);
+    padding: 48px 44px;
+    background:
+      radial-gradient(600px 280px at 100% 0%, rgba(124, 58, 237, .12), transparent 60%),
+      radial-gradient(500px 240px at 0% 100%, rgba(14, 165, 233, .12), transparent 60%),
+      linear-gradient(180deg, #ffffff, #f4f7fb);
+    border: 1px solid var(--line);
+    box-shadow: var(--shadow-md);
+    margin-bottom: 36px;
+  }
+  .hero .kicker {
+    font-size: 12px; letter-spacing: .2em; text-transform: uppercase;
+    color: var(--accent-2); font-weight: 600; margin-bottom: 14px;
+  }
+  .hero h1 {
+    font-family: var(--serif);
+    font-size: clamp(34px, 4.4vw, 52px);
+    line-height: 1.18;
+    margin: 0 0 14px;
+    letter-spacing: -.01em;
+  }
+  .hero .subtitle {
+    font-size: 18px; color: var(--text-soft); margin: 0 0 20px;
+  }
+  .hero .meta {
+    display: flex; flex-wrap: wrap; gap: 10px;
+    margin-top: 18px;
+  }
+  .hero .meta-format {
+    margin-top: 10px;
+    font-size: 12.5px;
+    color: var(--text-soft);
+    padding: 5px 12px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, .7);
+    border: 1px solid var(--line);
+    line-height: 1.4;
+    display: inline-block;
+    max-width: 100%;
+  }
+  .hero .meta span,
+  .hero .meta .meta-pill {
+    font-size: 12.5px; color: var(--text-soft);
+    padding: 5px 12px; border-radius: 999px;
+    background: rgba(255, 255, 255, .7);
+    border: 1px solid var(--line);
+    line-height: 1.4;
+  }
+
+  /* Subtle clickable speaker pill — exactly the same shape as neighbours,
+     interactivity hinted only via dotted underline under the name */
+  .hero .meta .meta-pill-trigger {
+    font-family: inherit;
+    color: var(--text-soft);
+    cursor: pointer;
+    transition: background .18s ease, border-color .18s ease, color .18s ease, box-shadow .18s ease;
+    position: relative;
+  }
+  .hero .meta .meta-pill-trigger .hint {
+    border-bottom: 1px dotted var(--accent-2);
+    padding-bottom: 1px;
+    transition: border-color .18s ease;
+  }
+  .hero .meta .meta-pill-trigger:hover {
+    color: var(--text);
+    border-color: var(--line-strong);
+    background: #ffffff;
+    box-shadow: 0 4px 12px rgba(15, 23, 42, .06);
+  }
+  .hero .meta .meta-pill-trigger:hover .hint { border-bottom-color: var(--accent); }
+  .hero .meta .meta-pill-trigger[aria-expanded="true"] {
+    color: var(--text);
+    background: #ffffff;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 4px rgba(14, 165, 233, .08);
+  }
+  .hero .meta .meta-pill-trigger[aria-expanded="true"] .hint {
+    border-bottom-style: solid;
+    border-bottom-color: var(--accent);
+  }
+
+  /* ===== Bio card ===== */
+  .bio-card {
+    margin-top: 0;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    background:
+      radial-gradient(700px 240px at 0% 0%, rgba(14, 165, 233, .07), transparent 60%),
+      radial-gradient(600px 220px at 100% 100%, rgba(124, 58, 237, .06), transparent 60%),
+      linear-gradient(180deg, rgba(255,255,255,.97), rgba(247,248,251,.97));
+    padding: 0;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(-4px);
+    transition: max-height .4s ease, opacity .25s ease, transform .25s ease, padding .25s ease, margin-top .25s ease;
+    position: relative;
+  }
+  .bio-card.is-open {
+    max-height: 1000px;
+    opacity: 1;
+    transform: translateY(0);
+    margin-top: 18px;
+    padding: 22px 26px 24px;
+  }
+  /* — header — */
+  .bio-card .bio-head {
+    display: flex; align-items: center; gap: 16px;
+    padding-bottom: 16px;
+    border-bottom: 1px dashed var(--line);
+    margin-bottom: 18px;
+  }
+  .bio-card .avatar {
+    width: 52px; height: 52px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    color: #fff;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-family: var(--serif);
+    font-size: 22px; font-weight: 600;
+    box-shadow: 0 6px 18px rgba(124, 58, 237, .28),
+                inset 0 0 0 3px rgba(255, 255, 255, .35);
+    flex-shrink: 0;
+  }
+  .bio-card .bio-id { line-height: 1.5; flex: 1; min-width: 0; }
+  .bio-card .bio-id .bio-name {
+    display: flex; align-items: baseline; gap: 10px;
+    font-family: var(--serif); font-size: 18px; color: var(--text);
+    letter-spacing: .005em;
+    margin-bottom: 6px;
+  }
+  .bio-card .bio-id .bio-name b { font-weight: 600; }
+  .bio-card .bio-id .bio-name .sub {
+    font-family: var(--body);
+    font-size: 12px;
+    color: var(--muted);
+    font-weight: 500;
+  }
+  .bio-card .bio-id .dept-chips {
+    display: inline-flex; flex-wrap: wrap; gap: 6px;
+  }
+  .bio-card .bio-id .dept-chips em {
+    font-style: normal;
+    font-size: 11.5px;
+    padding: 2px 9px;
+    border-radius: 999px;
+    background: rgba(14, 165, 233, .08);
+    color: var(--accent);
+    border: 1px solid rgba(14, 165, 233, .18);
+    letter-spacing: .02em;
+    line-height: 1.6;
+  }
+  .bio-card .bio-id .dept-chips em + em {
+    background: rgba(124, 58, 237, .07);
+    color: var(--accent-2);
+    border-color: rgba(124, 58, 237, .18);
+  }
+  .bio-card .bio-id .dept-chips em + em + em {
+    background: rgba(22, 199, 161, .08);
+    color: #0f9f80;
+    border-color: rgba(22, 199, 161, .22);
+  }
+
+  /* — highlights "闪光时刻" — */
+  .bio-highlights {
+    margin-top: 18px;
+    border-radius: 14px;
+    background:
+      radial-gradient(500px 200px at 0% 0%, rgba(124, 58, 237, .08), transparent 60%),
+      radial-gradient(400px 180px at 100% 100%, rgba(22, 199, 161, .08), transparent 60%),
+      linear-gradient(180deg, rgba(255, 255, 255, .92), rgba(247, 248, 251, .92));
+    border: 1px solid rgba(124, 58, 237, .18);
+    padding: 16px 18px 18px;
+    position: relative;
+    overflow: hidden;
+  }
+  .bio-highlights::before {
+    content: "";
+    position: absolute; inset: 0;
+    background: radial-gradient(2px 2px at 18px 22px, rgba(124, 58, 237, .35), transparent 50%),
+                radial-gradient(1.5px 1.5px at 85% 30%, rgba(14, 165, 233, .4), transparent 50%),
+                radial-gradient(1.5px 1.5px at 70% 78%, rgba(22, 199, 161, .45), transparent 50%);
+    pointer-events: none;
+    opacity: .85;
+  }
+  .bio-highlights-title {
+    display: flex; align-items: center; gap: 8px;
+    font-family: var(--mono);
+    font-size: 11.5px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--accent-2);
+    margin-bottom: 12px;
+    position: relative;
+  }
+  .bio-highlights-title .star {
+    width: 14px; height: 14px;
+    color: var(--accent-2);
+  }
+  .bio-highlights-title .zh {
+    font-family: var(--serif);
+    font-size: 14px;
+    letter-spacing: .04em;
+    color: var(--text);
+    text-transform: none;
+  }
+  .bio-highlights-title .en {
+    color: var(--muted);
+    font-weight: 500;
+  }
+  .bio-highlights-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    position: relative;
+  }
+  .hl-card {
+    border-radius: 12px;
+    padding: 14px 16px;
+    background: rgba(255, 255, 255, .85);
+    border: 1px solid rgba(15, 23, 42, .06);
+    box-shadow: 0 6px 16px rgba(15, 23, 42, .04);
+    position: relative;
+    overflow: hidden;
+  }
+  .hl-card::before {
+    content: "";
+    position: absolute; left: 0; top: 14px; bottom: 14px;
+    width: 3px;
+    border-radius: 0 3px 3px 0;
+    background: linear-gradient(180deg, var(--accent-2), var(--accent-3));
+  }
+  .hl-card .hl-tag {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 11px;
+    font-family: var(--mono);
+    letter-spacing: .12em;
+    color: var(--accent-2);
+    margin-bottom: 8px;
+    padding-left: 8px;
+  }
+  .hl-card .hl-tag::before {
+    content: "✦";
+    color: var(--accent-2);
+    font-size: 12px;
+  }
+  .hl-card .hl-title {
+    font-family: var(--serif);
+    font-size: 14.5px;
+    color: var(--text);
+    font-weight: 600;
+    margin-bottom: 6px;
+    padding-left: 8px;
+    line-height: 1.4;
+  }
+  .hl-card .hl-text {
+    font-size: 13px;
+    line-height: 1.78;
+    color: var(--text-soft);
+    padding-left: 8px;
+  }
+  .hl-card .hl-text b {
+    font-weight: 600; color: var(--text);
+    background: linear-gradient(180deg, transparent 60%, rgba(22, 199, 161, .28) 60%);
+    padding: 0 2px;
+  }
+  .hl-card .hl-text strong { color: var(--text); font-weight: 600; }
+  @media (max-width: 720px) {
+    .bio-highlights-grid { grid-template-columns: 1fr; }
+  }
+
+  /* — body — */
+  .bio-card .bio-body {
+    display: grid;
+    grid-template-columns: 70px 1fr;
+    gap: 10px 18px;
+    font-size: 13.5px;
+    line-height: 1.78;
+  }
+  .bio-card .bio-body dt {
+    color: var(--muted);
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    padding-top: 3px;
+    position: relative;
+  }
+  .bio-card .bio-body dt::before {
+    content: "";
+    position: absolute; left: 0; top: 13px; bottom: 13px;
+    width: 2px;
+    background: linear-gradient(180deg, var(--accent), var(--accent-2));
+    border-radius: 2px;
+    opacity: 0;
+    transition: opacity .2s;
+  }
+  .bio-card .bio-body dt {
+    padding-left: 10px;
+  }
+  .bio-card .bio-body:hover dt::before { opacity: .25; }
+  .bio-card .bio-body dd {
+    margin: 0; color: var(--text-soft);
+  }
+  .bio-card .bio-body dd strong { color: var(--text); font-weight: 600; }
+  .bio-card .bio-body dd em {
+    font-style: normal; color: var(--accent-2); font-weight: 600;
+  }
+  .bio-card .bio-body dd b {
+    font-weight: 600; color: var(--text);
+    background: linear-gradient(180deg, transparent 60%, rgba(22, 199, 161, .25) 60%);
+    padding: 0 2px;
+  }
+  @media (max-width: 720px) {
+    .bio-stats { grid-template-columns: 1fr 1fr; }
+    .bio-card .bio-body { grid-template-columns: 1fr; gap: 2px 0; }
+    .bio-card .bio-body dt { padding-top: 10px; padding-left: 0; }
+    .bio-card .bio-body dt::before { display: none; }
+    .bio-card .bio-body dt:first-child { padding-top: 0; }
+  }
+
+  /* ===== Section ===== */
+  section.block {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-xl);
+    padding: 40px 44px;
+    margin-bottom: 28px;
+    box-shadow: var(--shadow-sm);
+    scroll-margin-top: 88px;
+  }
+
+  .section-header {
+    display: flex; align-items: baseline; gap: 16px;
+    padding-bottom: 16px;
+    margin-bottom: 24px;
+    border-bottom: 1px solid var(--line);
+  }
+  .section-header .num {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--muted);
+    background: var(--bg-soft);
+    padding: 4px 10px;
+    border-radius: 999px;
+    letter-spacing: .08em;
+  }
+  .section-header h2 {
+    margin: 0;
+    font-family: var(--serif);
+    font-size: 30px;
+    letter-spacing: -.005em;
+  }
+  .section-header .lede {
+    margin-left: auto; max-width: 360px;
+    color: var(--muted); font-size: 13px;
+    text-align: right;
+  }
+
+  /* ===== Typography in section ===== */
+  section.block h3 {
+    font-size: 20px;
+    margin: 32px 0 12px;
+    padding-left: 12px;
+    border-left: 3px solid var(--accent);
+    line-height: 1.4;
+  }
+  section.block h4 {
+    font-size: 16.5px;
+    margin: 22px 0 10px;
+    color: var(--text);
+  }
+  section.block p {
+    margin: 0 0 14px;
+    color: var(--text-soft);
+  }
+  section.block strong { color: var(--text); }
+  section.block ul, section.block ol {
+    margin: 0 0 16px;
+    padding-left: 22px;
+    color: var(--text-soft);
+  }
+  section.block li { margin: 4px 0; }
+  section.block li::marker { color: var(--muted); }
+  section.block code:not(pre code) {
+    background: var(--bg-soft);
+    color: var(--accent-2);
+    padding: 1px 6px;
+    border-radius: 5px;
+    font-size: .92em;
+    border: 1px solid var(--line);
+  }
+  section.block blockquote {
+    margin: 16px 0;
+    padding: 12px 18px;
+    border-left: 3px solid var(--accent-3);
+    background: rgba(22, 199, 161, .06);
+    border-radius: 0 12px 12px 0;
+    color: var(--text-soft);
+  }
+
+  /* ===== Tables ===== */
+  .table-wrap {
+    overflow-x: auto;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    margin: 16px 0 22px;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    background: var(--panel);
+  }
+  thead th {
+    background: var(--bg-soft);
+    color: var(--text);
+    font-weight: 600;
+    text-align: left;
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--line);
+    white-space: nowrap;
+  }
+  tbody td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--line);
+    color: var(--text-soft);
+    vertical-align: top;
+  }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover { background: var(--bg-soft); }
+
+  /* ===== Cards ===== */
+  .grid-2 {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    margin: 16px 0;
+  }
+  .grid-3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin: 16px 0;
+  }
+  .card {
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    padding: 18px 20px;
+    background: var(--panel-2);
+  }
+  .card .tag {
+    display: inline-block;
+    font-size: 11px; letter-spacing: .08em; text-transform: uppercase;
+    color: var(--accent-2); font-weight: 600;
+    margin-bottom: 6px;
+  }
+  .card h4 { margin: 0 0 8px; }
+  .card p { margin: 0 0 6px; color: var(--text-soft); font-size: 14px; }
+
+  /* ===== Mermaid container ===== */
+  .mermaid-wrap {
+    margin: 18px 0 26px;
+    padding: 22px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    background:
+      linear-gradient(180deg, #fcfdff, #f4f7fb);
+    overflow-x: auto;
+    text-align: center;
+  }
+  .mermaid {
+    display: inline-block;
+    font-family: var(--body);
+    min-width: 600px;
+  }
+
+  /* ===== Details / Collapsible (prompt templates) ===== */
+  details.collapsible {
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    margin: 12px 0;
+    background: var(--panel);
+    overflow: hidden;
+    transition: border-color .15s, box-shadow .15s;
+  }
+  details.collapsible[open] {
+    border-color: var(--line-strong);
+    box-shadow: var(--shadow-sm);
+  }
+  details.collapsible > summary {
+    list-style: none;
+    cursor: pointer;
+    padding: 14px 20px;
+    display: flex; align-items: center; gap: 12px;
+    font-weight: 600;
+    color: var(--text);
+    background: var(--panel-2);
+    user-select: none;
+  }
+  details.collapsible > summary::-webkit-details-marker { display: none; }
+  details.collapsible > summary::before {
+    content: "+";
+    width: 22px; height: 22px;
+    border: 1px solid var(--line-strong);
+    border-radius: 6px;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-family: var(--mono); font-size: 14px;
+    color: var(--text-soft);
+    background: #fff;
+    transition: transform .2s, background .2s, color .2s;
+    flex-shrink: 0;
+  }
+  details.collapsible[open] > summary::before {
+    content: "−";
+    background: var(--text);
+    color: #fff;
+    border-color: var(--text);
+  }
+  details.collapsible > summary .tag-pill {
+    margin-left: auto;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    background: var(--bg-soft);
+    padding: 2px 8px;
+    border-radius: 999px;
+    letter-spacing: .06em;
+  }
+  details.collapsible > .body {
+    padding: 16px 20px 20px;
+    border-top: 1px solid var(--line);
+    background: var(--panel);
+  }
+
+  /* ===== Code block (prompt) ===== */
+  .codeblock {
+    position: relative;
+    background: var(--code-bg);
+    color: var(--code-text);
+    border-radius: 10px;
+    padding: 16px 18px;
+    overflow-x: auto;
+    font-family: var(--mono);
+    font-size: 13px;
+    line-height: 1.62;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+  .copy-btn {
+    position: absolute; top: 10px; right: 10px;
+    border: 1px solid rgba(255,255,255,.18);
+    background: rgba(255, 255, 255, .06);
+    color: #cbd5e1;
+    font-family: var(--mono);
+    font-size: 11px;
+    padding: 4px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background .15s, color .15s;
+  }
+  .copy-btn:hover { background: rgba(255,255,255,.16); color: #fff; }
+  .copy-btn.done { background: var(--accent-3); color: #fff; border-color: transparent; }
+
+  /* ===== Image embed ===== */
+  .img-row {
+    display: flex; flex-wrap: wrap; gap: 16px;
+    margin: 16px 0 24px;
+    align-items: flex-start;
+  }
+  .img-row figure {
+    margin: 0;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    padding: 8px;
+    background: var(--panel-2);
+  }
+  .img-row img {
+    display: block;
+    border-radius: 8px;
+    max-width: 100%;
+    height: auto;
+  }
+  .img-row figcaption {
+    font-size: 11.5px;
+    color: var(--muted);
+    margin-top: 6px;
+    text-align: center;
+  }
+  .embed-link {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 10px 14px;
+    border: 1px dashed var(--line-strong);
+    border-radius: 10px;
+    background: var(--panel-2);
+    color: var(--text-soft);
+    font-size: 13px;
+    margin: 8px 0;
+    text-decoration: none;
+  }
+  .embed-link:hover { border-color: var(--accent); color: var(--accent); text-decoration: none; }
+  .embed-link::before {
+    content: "↗";
+    font-size: 14px; color: var(--accent);
+  }
+
+  /* ===== File path inline ===== */
+  .path-link {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 12.5px;
+    background: var(--bg-soft);
+    color: var(--accent-2);
+    padding: 2px 8px;
+    border-radius: 6px;
+    border: 1px solid var(--line);
+    word-break: break-all;
+    text-decoration: none;
+  }
+  .path-link:hover { background: #e0e7ef; text-decoration: none; }
+
+  /* ===== Misc ===== */
+  .callout {
+    border-left: 3px solid var(--accent-2);
+    background: rgba(124, 58, 237, .04);
+    padding: 14px 18px;
+    border-radius: 0 12px 12px 0;
+    margin: 14px 0;
+    color: var(--text-soft);
+  }
+  .callout strong { color: var(--accent-2); }
+
+  .footer-note {
+    margin-top: 40px; padding-top: 20px;
+    border-top: 1px dashed var(--line);
+    color: var(--muted);
+    font-size: 13px; text-align: center;
+  }
+
+  /* ===== AI PM Builder OS card (1.2 培训概览) ===== */
+  .ops-card {
+    position: relative;
+    border-radius: 22px;
+    padding: 28px 30px 22px;
+    background:
+      linear-gradient(180deg, #ffffff, #f6f9ff 80%);
+    border: 1px solid var(--line);
+    box-shadow: var(--shadow-md);
+    margin: 16px 0 28px;
+    overflow: hidden;
+  }
+  .ops-card::before {
+    content: "";
+    position: absolute; inset: 0;
+    background:
+      linear-gradient(rgba(64, 95, 141, 0.045) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(64, 95, 141, 0.045) 1px, transparent 1px);
+    background-size: 28px 28px;
+    pointer-events: none;
+    -webkit-mask-image: radial-gradient(ellipse at center, black 30%, transparent 90%);
+            mask-image: radial-gradient(ellipse at center, black 30%, transparent 90%);
+    opacity: .55;
+  }
+  .ops-card > * { position: relative; z-index: 1; }
+
+  .ops-head {
+    display: flex; justify-content: space-between; align-items: flex-start;
+    gap: 16px;
+    padding-bottom: 18px;
+    border-bottom: 1px dashed var(--line);
+    margin-bottom: 18px;
+  }
+  .ops-head-text { flex: 1; min-width: 0; }
+  .ops-card .ops-title {
+    margin: 0 0 6px;
+    font-size: 21px;
+    font-weight: 700;
+    font-family: var(--body);
+    letter-spacing: -.005em;
+    color: var(--text);
+    border-left: none; padding-left: 0;
+    line-height: 1.3;
+  }
+  .ops-card .ops-sub {
+    margin: 0;
+    font-size: 13px;
+    color: var(--text-soft);
+    line-height: 1.6;
+  }
+  .live-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 5px 12px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-family: var(--mono);
+    letter-spacing: .14em;
+    color: #0f9f80;
+    background: rgba(22, 199, 161, .07);
+    border: 1px solid rgba(22, 199, 161, .28);
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .live-badge::before {
+    content: "";
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--accent-3);
+    box-shadow: 0 0 0 3px rgba(22, 199, 161, .2);
+    animation: live-pulse 2s ease-in-out infinite;
+  }
+  @keyframes live-pulse {
+    0%, 100% { box-shadow: 0 0 0 3px rgba(22, 199, 161, .2); }
+    50% { box-shadow: 0 0 0 6px rgba(22, 199, 161, .05); }
+  }
+
+  .ops-pillars {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 14px;
+  }
+  .pillar {
+    padding: 14px 18px;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, .82);
+    border: 1px solid var(--line);
+    transition: border-color .2s, transform .2s;
+  }
+  .pillar:hover {
+    border-color: var(--line-strong);
+    transform: translateY(-1px);
+  }
+  .pillar strong {
+    display: block;
+    font-size: 14px;
+    margin-bottom: 6px;
+    color: var(--text);
+  }
+  .pillar p {
+    margin: 0;
+    font-size: 12.5px;
+    color: var(--text-soft);
+    line-height: 1.65;
+  }
+
+  .ops-rhythm {
+    margin-top: 4px;
+  }
+  .ops-rhythm-caption {
+    margin: 0 0 10px;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--text-soft);
+  }
+  .ops-card .ops-rhythm-table-wrap.table-wrap {
+    margin: 0;
+  }
+  .ops-rhythm-table-wrap {
+    border-radius: 14px;
+    overflow: hidden;
+    border: 1px solid var(--line);
+    background: rgba(255, 255, 255, .9);
+  }
+  .ops-rhythm-table-wrap table {
+    background: transparent;
+  }
+  .ops-rhythm-table-wrap .ops-rhythm-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    margin: 0;
+  }
+  .ops-rhythm-table th {
+    text-align: left;
+    padding: 10px 14px;
+    background: rgba(64, 95, 141, 0.07);
+    font-weight: 600;
+    color: var(--text);
+    font-size: 12px;
+    border-bottom: 1px solid var(--line);
+  }
+  .ops-rhythm-table td {
+    padding: 11px 14px;
+    border-bottom: 1px solid var(--line);
+    color: var(--text-soft);
+    vertical-align: top;
+    line-height: 1.55;
+  }
+  .ops-rhythm-table td:first-child {
+    font-weight: 600;
+    color: var(--text);
+  }
+  .ops-rhythm-table td:nth-child(2) {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--muted);
+    white-space: nowrap;
+    width: 1%;
+  }
+  .ops-rhythm-table tr:last-child td { border-bottom: none; }
+
+  /* ===== 百智小广告（4.2 五层体系表后）===== */
+  .plug-spot {
+    position: relative;
+    margin: 26px 0 32px;
+    padding: 20px 22px 18px;
+    border-radius: 20px;
+    border: 1px dashed rgba(124, 58, 237, .42);
+    background: linear-gradient(145deg, rgba(124, 58, 237, .09), rgba(59, 130, 246, .06) 45%, rgba(244, 114, 182, .06));
+    box-shadow: 0 14px 40px rgba(99, 102, 241, .1);
+    overflow: hidden;
+  }
+  .plug-spot-bg {
+    position: absolute;
+    inset: -30% -20% auto auto;
+    width: min(320px, 90vw);
+    height: 220px;
+    background: radial-gradient(ellipse at 70% 0%, rgba(244, 114, 182, .22), transparent 62%);
+    pointer-events: none;
+    opacity: .85;
+  }
+  .plug-spot > *:not(.plug-spot-bg) { position: relative; z-index: 1; }
+  .plug-top {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 12px;
+    margin-bottom: 12px;
+  }
+  .plug-pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 12px 5px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: .04em;
+    color: #5b21b6;
+    background: linear-gradient(180deg, #fff7ed, #fef3c7);
+    border: 1px solid rgba(245, 158, 11, .45);
+    box-shadow: 0 2px 0 rgba(245, 158, 11, .25);
+    transform: rotate(-1.2deg);
+    animation: plug-wiggle 4.5s ease-in-out infinite;
+  }
+  @keyframes plug-wiggle {
+    0%, 100% { transform: rotate(-1.2deg) translateY(0); }
+    50% { transform: rotate(1deg) translateY(-1px); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .plug-pill { animation: none; transform: rotate(-1deg); }
+  }
+  .plug-emoji { font-size: 1.25rem; line-height: 1; filter: drop-shadow(0 1px 2px rgba(0,0,0,.08)); }
+  .plug-wink {
+    font-size: 12px;
+    color: var(--muted);
+    font-style: italic;
+  }
+  .plug-title-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 10px 14px;
+    margin-bottom: 10px;
+  }
+  .plug-brand {
+    font-size: 1.45rem;
+    font-weight: 800;
+    letter-spacing: .02em;
+    background: linear-gradient(120deg, #6d28d9, #2563eb 55%, #db2777);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .plug-chips { display: inline-flex; flex-wrap: wrap; gap: 6px; }
+  .plug-chip {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 9px;
+    border-radius: 999px;
+    color: var(--text-soft);
+    background: rgba(255, 255, 255, .72);
+    border: 1px solid rgba(255, 255, 255, .9);
+    box-shadow: 0 1px 3px rgba(79, 70, 229, .08);
+  }
+  .plug-lede {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.75;
+    color: var(--text);
+  }
+  .plug-lede strong { color: var(--text); font-weight: 700; }
+
+  @media (max-width: 760px) {
+    .ops-card { padding: 22px 20px 18px; }
+    .ops-head { flex-direction: column; align-items: flex-start; }
+    .ops-pillars { grid-template-columns: 1fr; }
+    .ops-rhythm-table th,
+    .ops-rhythm-table td { padding: 9px 10px; font-size: 12.5px; }
+    .ops-rhythm-table td:nth-child(2) { white-space: normal; }
+  }
+
+  /* ===== Asset note (P6 资料包提示) ===== */
+  .asset-note {
+    display: flex; gap: 12px; align-items: flex-start;
+    margin: 16px 0 22px;
+    padding: 14px 18px;
+    border-radius: 12px;
+    background:
+      linear-gradient(180deg, rgba(245, 158, 11, .08), rgba(245, 158, 11, .02));
+    border: 1px solid rgba(245, 158, 11, .35);
+    font-size: 13.5px;
+    line-height: 1.7;
+    color: var(--text-soft);
+  }
+  .asset-note .asset-icon {
+    flex-shrink: 0;
+    width: 36px; height: 36px;
+    border-radius: 10px;
+    background: rgba(245, 158, 11, .14);
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 18px;
+  }
+  .asset-note strong { color: var(--text); }
+  .asset-note code { font-size: .92em; }
+
+  /* ===== Welcome gate (lively & playful) ===== */
+  body.gate-locked {
+    overflow: hidden;
+  }
+  body.gate-locked .page,
+  body.gate-locked .topbar {
+    filter: blur(14px) saturate(.92);
+    pointer-events: none;
+    user-select: none;
+  }
+  .gate-backdrop {
+    position: fixed; inset: 0;
+    z-index: 300;
+    display: flex; align-items: center; justify-content: center;
+    padding: 24px;
+    background:
+      radial-gradient(circle at 18% 20%, rgba(124, 58, 237, .22), transparent 50%),
+      radial-gradient(circle at 82% 80%, rgba(14, 165, 233, .22), transparent 50%),
+      radial-gradient(circle at 50% 50%, rgba(22, 199, 161, .12), transparent 70%),
+      rgba(15, 23, 42, .42);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .35s ease;
+  }
+  .gate-backdrop.is-open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .gate-card {
+    position: relative;
+    width: min(440px, 100%);
+    border-radius: 24px;
+    padding: 36px 36px 30px;
+    background: #ffffff;
+    border: 1px solid rgba(255, 255, 255, .8);
+    box-shadow:
+      0 30px 80px rgba(15, 23, 42, .35),
+      0 0 0 1px rgba(124, 58, 237, .12);
+    transform: translateY(20px) scale(.96);
+    opacity: 0;
+    transition: transform .5s cubic-bezier(.2, .8, .2, 1.05), opacity .35s ease;
+    overflow: hidden;
+  }
+  .gate-backdrop.is-open .gate-card {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+  /* Floating decorative emoji blobs */
+  .gate-card::after {
+    content: "";
+    position: absolute;
+    top: -40px; right: -40px;
+    width: 140px; height: 140px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(124, 58, 237, .14), transparent 65%);
+    pointer-events: none;
+    animation: gate-float 6s ease-in-out infinite;
+  }
+  @keyframes gate-float {
+    0%, 100% { transform: translate(0, 0); }
+    50% { transform: translate(-10px, 10px); }
+  }
+  .gate-mark {
+    position: relative;
+    display: block;
+    width: 48px;
+    height: 48px;
+    margin-bottom: 14px;
+    line-height: 0;
+    isolation: isolate;
+  }
+  /* 外圈：缓慢旋转的「神经光谱」光晕 */
+  .gate-mark::before {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 78px;
+    height: 78px;
+    margin: -39px 0 0 -39px;
+    border-radius: 22px;
+    background: conic-gradient(
+      from 0deg,
+      rgba(14, 165, 233, 0) 0deg,
+      rgba(14, 165, 233, 0.55) 65deg,
+      rgba(99, 102, 241, 0.42) 130deg,
+      rgba(124, 58, 237, 0.55) 200deg,
+      rgba(34, 211, 238, 0.35) 270deg,
+      rgba(14, 165, 233, 0) 330deg,
+      rgba(14, 165, 233, 0) 360deg
+    );
+    animation: gate-mark-orbit 4.2s linear infinite;
+    z-index: 0;
+    opacity: 0.48;
+    filter: blur(6px);
+    pointer-events: none;
+  }
+  @keyframes gate-mark-orbit {
+    to { transform: rotate(360deg); }
+  }
+  .gate-mark svg {
+    position: relative;
+    z-index: 1;
+    display: block;
+    width: 48px;
+    height: 48px;
+    animation: gate-mark-nexus 2.8s ease-in-out infinite;
+  }
+  @keyframes gate-mark-nexus {
+    0%, 100% {
+      filter:
+        drop-shadow(0 0 5px rgba(14, 165, 233, 0.22))
+        drop-shadow(0 0 12px rgba(124, 58, 237, 0.12));
+    }
+    50% {
+      filter:
+        drop-shadow(0 0 12px rgba(14, 165, 233, 0.5))
+        drop-shadow(0 0 22px rgba(124, 58, 237, 0.32));
+    }
+  }
+  /* 连线上「信号」流动 */
+  .gate-mark .gate-mark-edge {
+    stroke-dasharray: 7 40;
+    animation: gate-mark-signal 1.75s linear infinite;
+  }
+  @keyframes gate-mark-signal {
+    to { stroke-dashoffset: -47; }
+  }
+  /* 节点脉冲：错峰，像推理步进 */
+  .gate-mark .gate-mark-node {
+    animation: gate-mark-node 2.1s ease-in-out infinite;
+  }
+  .gate-mark .gate-mark-node.n2 { animation-delay: 0.32s; }
+  .gate-mark .gate-mark-node.n3 { animation-delay: 0.64s; }
+  @keyframes gate-mark-node {
+    0%, 100% { opacity: 0.4; }
+    50% { opacity: 1; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .gate-mark::before { animation: none; opacity: 0.28; }
+    .gate-mark svg { animation: none; }
+    .gate-mark .gate-mark-edge { animation: none; }
+    .gate-mark .gate-mark-node { animation: none; opacity: 0.85; }
+  }
+  .gate-sparkle {
+    position: absolute;
+    font-size: 14px;
+    opacity: 0;
+    animation: gate-sparkle 3.2s ease-in-out infinite;
+    pointer-events: none;
+  }
+  .gate-sparkle.s1 { top: 30px; right: 36px; animation-delay: 0s; }
+  .gate-sparkle.s2 { top: 90px; right: 100px; animation-delay: 1s; }
+  .gate-sparkle.s3 { top: 60px; right: 70px; animation-delay: 2s; }
+  @keyframes gate-sparkle {
+    0%, 100% { opacity: 0; transform: scale(.6) rotate(0deg); }
+    50% { opacity: 1; transform: scale(1) rotate(20deg); }
+  }
+  .gate-title {
+    margin: 0 0 8px;
+    font-family: var(--serif);
+    font-size: 26px;
+    line-height: 1.3;
+    color: var(--text);
+    letter-spacing: -.005em;
+  }
+  .gate-punch {
+    margin: 0 0 16px;
+    font-size: clamp(20px, 4.8vw, 28px);
+    font-weight: 800;
+    line-height: 1.25;
+    letter-spacing: -.03em;
+    background: linear-gradient(115deg, #0f172a 0%, #2563eb 42%, #7c3aed 78%, #db2777 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .gate-title .accent {
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .gate-lede {
+    margin: 0 0 22px;
+    color: var(--text-soft);
+    font-size: 14px;
+    line-height: 1.7;
+  }
+  .gate-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .gate-field {
+    position: relative;
+  }
+  .gate-field label {
+    position: absolute;
+    top: 12px; left: 16px;
+    font-size: 13px;
+    color: var(--muted);
+    pointer-events: none;
+    transition: top .18s ease, font-size .18s ease, color .18s ease;
+    background: transparent;
+    padding: 0 4px;
+  }
+  .gate-field input {
+    width: 100%;
+    padding: 22px 16px 10px;
+    font-size: 14px;
+    font-family: var(--body);
+    color: var(--text);
+    background: var(--bg-soft);
+    border: 1.5px solid var(--line);
+    border-radius: 12px;
+    transition: border-color .18s, box-shadow .18s, background .18s;
+    box-sizing: border-box;
+  }
+  .gate-field input:focus {
+    outline: none;
+    border-color: var(--accent-2);
+    background: #fff;
+    box-shadow: 0 0 0 4px rgba(124, 58, 237, .12);
+  }
+  .gate-field input:focus + label,
+  .gate-field input:not(:placeholder-shown) + label {
+    top: 6px;
+    font-size: 11px;
+    color: var(--accent-2);
+    font-weight: 600;
+  }
+  .gate-submit {
+    width: 100%;
+    margin-top: 8px;
+    padding: 13px 18px;
+    border: none;
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #fff;
+    background: linear-gradient(135deg, var(--accent-2), var(--accent));
+    cursor: pointer;
+    box-shadow: 0 8px 20px rgba(124, 58, 237, .28);
+    transition: transform .18s ease, box-shadow .18s ease;
+    font-family: var(--body);
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .gate-submit:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 12px 26px rgba(124, 58, 237, .35);
+  }
+  .gate-submit:active { transform: translateY(0); }
+  .gate-submit .arrow { transition: transform .2s; }
+  .gate-submit:hover .arrow { transform: translateX(4px); }
+  .gate-foot {
+    margin-top: 16px;
+    text-align: center;
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .gate-foot .pin {
+    color: var(--accent-3);
+  }
+
+  /* Visitor pill (after unlock) */
+  .visitor-pill {
+    display: inline-flex; align-items: center; gap: 8px;
+    flex-shrink: 0;
+    padding: 7px 12px 7px 14px;
+    border-radius: 999px;
+    font-size: 12px;
+    color: var(--text-soft);
+    background: rgba(124, 58, 237, .07);
+    border: 1px solid rgba(124, 58, 237, .18);
+    margin-left: auto;
+    white-space: nowrap;
+  }
+  .visitor-pill .reset-btn {
+    border: none;
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+    font-size: 12px;
+    padding: 0 2px;
+    transition: color .15s;
+  }
+  .visitor-pill .reset-btn:hover { color: var(--danger); }
+  .visitor-pill .dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--accent-3);
+    box-shadow: 0 0 0 2.5px rgba(22, 199, 161, .2);
+  }
+
+  /* ===== Responsive ===== */
+  @media (max-width: 980px) {
+    .shell { grid-template-columns: 1fr; padding: 20px; gap: 20px; }
+    .sidebar { position: static; max-height: none; }
+    .hero { padding: 32px 24px; }
+    section.block { padding: 28px 22px; }
+    .section-header { flex-direction: column; align-items: flex-start; gap: 8px; }
+    .section-header .lede { margin-left: 0; text-align: left; max-width: none; }
+    .grid-2, .grid-3 { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="progress" id="progress"></div>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <a class="brand" href="#hero">
+      <span class="dot"></span>
+      <span>AI PM Builder OS</span>
+    </a>
+    <nav class="topnav" id="topnav">
+      <a href="#keynote">培训正文</a>
+      <a href="#governance">治理规范</a>
+      <a href="#prompts">Prompt工程：从口头需求到结构化契约</a>
+      <a href="#skills">Skill 总览</a>
+      <a href="#feedback">反馈与分享</a>
+    </nav>
+    <span class="visitor-pill" id="visitor-pill" hidden>
+      <span class="dot"></span>
+      <span id="visitor-text">访客</span>
+      <button type="button" class="reset-btn" id="visitor-reset" title="清除登记信息">×</button>
+    </span>
+  </div>
+</header>
+
+<div class="shell">
+
+  <!-- ============== SIDEBAR ============== -->
+  <aside class="sidebar" id="sidebar">
+    <div class="group">
+      <h4>培训正文</h4>
+      <ul>
+        <li><a href="#p1"><span class="idx">P1</span><span>写在前面</span></a></li>
+        <li class="sub"><a href="#p1-1"><span class="idx">1.1</span><span>不是提示词技巧课</span></a></li>
+        <li class="sub"><a href="#p1-2"><span class="idx">1.2</span><span>培训概览</span></a></li>
+
+        <li><a href="#p2"><span class="idx">P2</span><span>目标与结论</span></a></li>
+        <li class="sub"><a href="#p2-1"><span class="idx">2.1</span><span>培训目标</span></a></li>
+        <li class="sub"><a href="#p2-2"><span class="idx">2.2</span><span>核心结论</span></a></li>
+
+        <li><a href="#p3"><span class="idx">P3</span><span>AI 工作流通用闭环</span></a></li>
+        <li class="sub"><a href="#p3-1"><span class="idx">3.1</span><span>通用闭环图</span></a></li>
+        <li class="sub"><a href="#p3-2"><span class="idx">3.2</span><span>角色分工</span></a></li>
+
+        <li><a href="#p4"><span class="idx">P4</span><span>我的 AI Agent teams</span></a></li>
+        <li class="sub"><a href="#p4-1"><span class="idx">4.1</span><span>两条理解轴</span></a></li>
+        <li class="sub"><a href="#p4-2"><span class="idx">4.2</span><span>5 层协作体系</span></a></li>
+        <li class="sub"><a href="#p4-3"><span class="idx">4.3</span><span>Skill / MCP / Agent / 知识库</span></a></li>
+
+        <li><a href="#p5"><span class="idx">P5</span><span>与 Agent 协作共创</span></a></li>
+        <li class="sub"><a href="#p5-1"><span class="idx">5.1</span><span>5 轮共创</span></a></li>
+        <li class="sub"><a href="#p5-2"><span class="idx">5.2</span><span>AI 五件套</span></a></li>
+        <li class="sub"><a href="#p5-3"><span class="idx">5.3</span><span>人机协作边界</span></a></li>
+        <li class="sub"><a href="#p5-4"><span class="idx">5.4</span><span>使用认知</span></a></li>
+
+        <li><a href="#p6"><span class="idx">P6</span><span>实践案例</span></a></li>
+        <li class="sub"><a href="#p6-1"><span class="idx">6.1</span><span>资料 → 分析报告</span></a></li>
+        <li class="sub"><a href="#p6-2"><span class="idx">6.2</span><span>百销 · 想法 → 原型</span></a></li>
+        <li class="sub"><a href="#p6-3"><span class="idx">6.3</span><span>百智 · 系统 → PRD</span></a></li>
+        <li class="sub"><a href="#p6-4"><span class="idx">6.4</span><span>原型 → Web MVP</span></a></li>
+
+        <li><a href="#p7"><span class="idx">P7</span><span>收尾</span></a></li>
+      </ul>
+    </div>
+
+    <div class="group">
+      <h4>方法 · 工具</h4>
+      <ul>
+        <li><a href="#governance"><span class="idx">02</span><span>治理规范</span></a></li>
+        <li><a href="#prompts"><span class="idx">03</span><span>Prompt工程：从口头需求到结构化契约</span></a></li>
+        <li><a href="#skills"><span class="idx">04</span><span>Skill 总览</span></a></li>
+      </ul>
+      <h4 class="sidebar-heading-link"><a href="#feedback">本次培训反馈与分享</a></h4>
+    </div>
+  </aside>
+
+  <!-- ============== MAIN ============== -->
+  <main class="main">
+
+    <!-- ===== HERO ===== -->
+    <div class="hero" id="hero">
+      <div class="kicker">PRODUCT × AI · BUILDER OS</div>
+      <h1>拥抱 AI 生产力，产品工作提效</h1>
+      <p class="subtitle">从一次性问答，到可复用的产品工作系统</p>
+      <div class="meta">
+        <button type="button"
+                class="meta-pill meta-pill-trigger"
+                id="bio-trigger"
+                aria-expanded="false"
+                aria-controls="bio-card"
+                title="点击查看分享者背景">
+          讲师：<span class="hint">张伟</span>
+        </button>
+        <span>建议时长：30 分钟</span>
+      </div>
+      <div class="meta-format">适合形式：内部产品分享、产品团队方法论培训、AI PM 入门到进阶培训</div>
+
+      <div class="bio-card" id="bio-card" role="region" aria-labelledby="bio-trigger" aria-hidden="true">
+        <div class="bio-head">
+          <span class="avatar">张</span>
+          <div class="bio-id">
+            <div class="bio-name">
+              <b>张伟</b>
+              <span class="sub">分享者背景 / Speaker</span>
+            </div>
+            <div class="dept-chips">
+              <em>百融智能 AaaS BG</em>
+              <em>AI2C</em>
+              <em>百智产品组</em>
+            </div>
+          </div>
+        </div>
+
+        <dl class="bio-body">
+          <dt>教育</dt>
+          <dd>北京化工大学（本科）· 中国社会科学院研究生院（经济学硕士）· MBA — 横跨 <em>工科 · 经济 · 管理</em> 三大学科</dd>
+
+          <dt>履历</dt>
+          <dd><strong>前百度高级产品经理</strong> · 10 年+ 产品经验，亲历 <em>互联网电商 · 金融科技 · AI Native</em> 三轮行业周期</dd>
+
+          <dt>业绩</dt>
+          <dd><strong>B 端</strong>：主导多个<strong>复杂业务系统</strong> <b>0→1</b>，沉淀 <strong>业务建模、流程闭环、平台能力</strong> 与可复用建设经验。<br><b>DAU 0→500 万</b> · <b>商业化 0→4 亿/年</b>。<br><strong>C 端</strong>：操盘 <b>0→1→100</b> 全生命周期，覆盖<strong>体验、用户增长、商业化</strong>与<strong>平台型产品建设</strong>。</dd>
+        </dl>
+      </div>
+    </div>
+
+    <!-- ===== KEYNOTE ===== -->
+    <section class="block" id="keynote">
+      <div class="section-header">
+        <span class="num">01</span>
+        <h2>正文 · Build Your AI PM OS</h2>
+      </div>
+
+      <h3 class="chapter-h" id="p1"><span class="num">P1</span>写在前面</h3>
+      <h4 class="sub-heading" id="p1-1"><span class="num">1.1</span>不是提示词技巧课，而是工作系统课</h4>
+      <p>大家好，今天分享的主题是 <strong>AI PM Builder OS</strong>——把 AI 装配成产品经理的长期工作系统，副标题是「如何借助 AI 进行产品工作提效」。</p>
+      <p>先把这次分享的边界讲清楚：这不是一场提示词技巧课，也不是工具安利课。我们不只讨论怎么让 AI 写一段更好看的文案，而是讨论产品经理如何把 AI 变成一个能长期协作的工作系统（合作伙伴 / 个人助理）。</p>
+      <p>产品经理的日常工作很复杂：要看资料、懂业务、写需求、做原型、跟研发沟通、盯上线、做复盘。AI 真正有价值的地方，是把这些环节串起来，让我们更快进入判断和决策，而不是陷在重复劳动里。</p>
+
+      <h4 class="sub-heading" id="p1-2"><span class="num">1.2</span>培训概览</h4>
+
+      <div class="ops-card" aria-label="AI PM Builder OS 培训框架">
+        <div class="ops-head">
+          <div class="ops-head-text">
+            <h3 class="ops-title">AI PM Builder OS</h3>
+            <p class="ops-sub">从资料读取到交付沉淀的一体化协作系统</p>
+          </div>
+          <span class="live-badge">LIVE WORKFLOW</span>
+        </div>
+
+        <div class="ops-pillars">
+          <div class="pillar">
+            <strong>AI 五件套</strong>
+            <p>工作目录、背景材料、任务说明、验收标准、留痕机制。</p>
+          </div>
+          <div class="pillar">
+            <strong>共创五轮法</strong>
+            <p>抛任务 → 补背景 → 澄清 → 辩论 → 收敛成果。</p>
+          </div>
+        </div>
+
+        <div class="ops-rhythm">
+          <p class="ops-rhythm-caption">培训时间分配（可按现场微调）</p>
+          <div class="table-wrap ops-rhythm-table-wrap">
+            <table class="ops-rhythm-table">
+              <thead>
+                <tr>
+                  <th scope="col">环节</th>
+                  <th scope="col">时长</th>
+                  <th scope="col">要点</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>P1–P2 写在前面、目标与结论</td>
+                  <td>5 分钟</td>
+                  <td>课程边界与「工作系统」定位；培训目标清单；五条核心结论串讲</td>
+                </tr>
+                <tr>
+                  <td>P3 通用闭环与分工</td>
+                  <td>5 分钟</td>
+                  <td>产品侧 AI 工作流闭环图；各 PM 任务下 AI 角色与 PM 必保留判断</td>
+                </tr>
+                <tr>
+                  <td>P4 AI Agent teams</td>
+                  <td>6 分钟</td>
+                  <td>两条理解轴；五层协作体系；Skill 与 MCP 的关系与收束</td>
+                </tr>
+                <tr>
+                  <td>P5 与 Agent 协作共创</td>
+                  <td>8 分钟</td>
+                  <td>高质量共创五轮；AI 产品工作五件套；人机协作边界（双栏对照）；使用认知四条</td>
+                </tr>
+                <tr>
+                  <td>P6 实践案例（四组）</td>
+                  <td>10 分钟</td>
+                  <td>资料→报告；百销原型；百智复杂逻辑→PRD；HTML 原型→可部署 MVP</td>
+                </tr>
+                <tr>
+                  <td>P7 收尾与文末附录</td>
+                  <td>6 分钟</td>
+                  <td>收尾金句与行动建议；治理规范、Prompt 工程契约区、Skill 总览</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="chapter-h" id="p2"><span class="num">P2</span>培训目标与核心结论</h3>
+      <h4 class="sub-heading" id="p2-1"><span class="num">2.1</span>培训目标</h4>
+      <p>完成培训后，参与者应该能做到：</p>
+      <ol>
+        <li>用 AI 快速完成资料检索、信息整理、需求分析、PRD 起草、原型迭代、评审准备和上线验收。</li>
+        <li>把一次性对话沉淀为可复用的工作流、提示词、模板、项目说明和评测标准。</li>
+        <li>理解 豆包、ChatGPT、Gemini、Cursor、Claude Code、OpenAICodex、百智/Obsidian、MCP、Skills 在产品工作里的不同定位。</li>
+        <li>能用"输入材料 + 工作目录 + 任务目标 + 验收标准 + 风险边界"的方式指挥 AI 工作。</li>
+        <li>能从"AI 帮我写内容"升级为"AI 帮我推进产品交付"。</li>
+      </ol>
+
+      <h4 class="sub-heading" id="p2-2"><span class="num">2.2</span>核心结论</h4>
+      <p>第一，AI 提效的核心不是生成内容，而是推进交付。只会让 AI 写文档，效率提升是有限的；能让 AI 帮你读资料、拆任务、生成原型、检查风险、沉淀复盘，才是真正的提效。</p>
+      <p>第二，产品经理要从"会聊天"升级为"会指挥"。AI 不是你问一句它答一句，而是你给它上下文、边界、目标和验收标准，它按任务推进。</p>
+      <p>第三，好的 AI 协作需要五件套：工作目录、背景材料、任务说明、验收标准和留痕机制。</p>
+      <p>第四，AI 是 PM 的协作团队，不是 PM 的替身。AI 能帮我们处理大量结构化、重复性、信息密集型工作，但用户价值、业务取舍、优先级和风险判断仍然要由 PM 负责。</p>
+      <p>第五，团队级提效靠模板和规范。个人经验可以让一个人变快，但团队要整体变快，必须有统一目录、提示词模板、评审标准和复盘机制。</p>
+
+      <h3 class="chapter-h" id="p3"><span class="num">P3</span>AI 工作流的通用闭环</h3>
+      <h4 class="sub-heading" id="p3-1"><span class="num">3.1</span>通用闭环图</h4>
+      <div class="mermaid-wrap">
+        <pre class="mermaid">
+flowchart LR
+    A["明确任务"] --> B["提供上下文"]
+    B --> C["让 AI 先读资料"]
+    C --> D["生成方案或改动"]
+    D --> E["人工校验与追问"]
+    E --> F["测试或评审"]
+    F --> G["沉淀模板/索引/复盘"]
+    G --> B
+        </pre>
+      </div>
+
+      <h4 class="sub-heading" id="p3-2"><span class="num">3.2</span>产品工作里的 AI 角色分工</h4>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>PM 任务</th><th>AI 最适合承担的角色</th><th>PM 必须保留的判断</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>市场/竞品/资料分析</td><td>研究助理、资料整理员</td><td>哪些结论能用于业务决策</td></tr>
+            <tr><td>需求分析</td><td>需求分析师、结构化助理</td><td>真实用户问题、优先级、取舍</td></tr>
+            <tr><td>PRD 起草</td><td>文档助理、交互流程助理</td><td>需求边界、业务规则、研发共识</td></tr>
+            <tr><td>原型设计</td><td>UI 原型助手、交互设计搭档</td><td>体验主张、品牌风格、关键路径</td></tr>
+            <tr><td>技术沟通</td><td>技术翻译、验收清单助手</td><td>技术可行性和资源排期</td></tr>
+            <tr><td>复盘沉淀</td><td>会议纪要和知识库助理</td><td>经验是否可复用，是否要纳入规范</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3 class="chapter-h" id="p4"><span class="num">P4</span>我的 AI Agent teams</h3>
+      <h4 class="sub-heading" id="p4-1"><span class="num">4.1</span>两条理解轴</h4>
+      <p>AI 工具不按品牌背诵，而是按两条轴来理解：</p>
+      <ol>
+        <li><code>从辅助到交付</code><br>有的工具只是帮你想、帮你写、帮你总结；有的工具已经能真正进入项目、改文件、跑任务、交付结果。</li>
+        <li><code>从零代码到工程化执行</code><br>有的工具更适合无代码、设计到代码、快速原型；有的工具更适合专业开发、复杂项目和长期迭代。</li>
+      </ol>
+
+      <h4 class="sub-heading" id="p4-2"><span class="num">4.2</span>所以，我的 AI Agent teams 不是一个工具，而是 5 层协作体系</h4>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>层级</th><th>代表工具</th><th>本质定位</th><th>我怎么用</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>通用对话层</code></td>
+              <td>豆包 / Gemini / ChatGPT /</td>
+              <td><code>通用 AI 助手 / 模型入口</code></td>
+              <td>做脑暴、资料总结、轻量分析、快速问答</td>
+            </tr>
+            <tr>
+              <td><code>原型生成层</code></td>
+              <td>Figma AI / Google AI Studio / Claude Design /Google stitch</td>
+              <td><code>零代码原型与设计到代码工具</code></td>
+              <td>把想法尽快变成可讨论的页面、流程和高保真原型</td>
+            </tr>
+            <tr>
+              <td><code>执行开发层</code></td>
+              <td>Cursor / Claude Code / OpenAI Codex /WorkBuddy</td>
+              <td><code>执行型 Agent / IDE</code></td>
+              <td>强在进入真实项目、读文件、改文件、跑命令、执行脚本、推动结果落地</td>
+            </tr>
+            <tr>
+              <td><code>跑通 Demo 层</code></td>
+              <td>GitHub / Vercel / Supabase</td>
+              <td><code>代码托管、部署与后端服务层</code></td>
+              <td>让原型真正上线、可访问、可登录、可存数据</td>
+            </tr>
+            <tr>
+              <td><code>知识沉淀层</code></td>
+              <td>Obsidian / Notion / 百智</td>
+              <td><code>知识库 / 上下文层</code></td>
+              <td>沉淀提示词、案例、复盘、模板和项目索引</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <aside class="plug-spot" id="plug-baizhi" aria-label="百智产品介绍">
+        <div class="plug-spot-bg" aria-hidden="true"></div>
+        <div class="plug-top">
+          <span class="plug-pill">打个小广告</span>
+          <span class="plug-emoji" aria-hidden="true">📣</span>
+          <span class="plug-wink" aria-hidden="true">就一句，不占用主线～</span>
+        </div>
+        <div class="plug-title-row">
+          <strong class="plug-brand">百智</strong>
+          <span class="plug-chips">
+            <span class="plug-chip">垂直业务</span>
+            <span class="plug-chip">执行型 Agent</span>
+            <span class="plug-chip">AI Native 知识生产</span>
+          </span>
+        </div>
+        <p class="plug-lede">百智——更偏 垂直业务的 执行型Agent （AI Native 知识生产平台），核心定位不是通用聊天，而是以录音采集为入口、以 PC 端深度研究与成果交付为核心，把 AI 能力封装进完整业务链路中的工作平台。</p>
+      </aside>
+
+      <h4 class="sub-heading" id="p4-3"><span class="num">4.3</span>Skill 和 MCP 到底是什么关系</h4>
+      <ol>
+        <li><code>Skill</code><br>不只是"提示词模板"，更像一套可复用的任务能力包，里面可以包含：方法说明、执行规则、步骤清单、参考资料，甚至脚本和命令。它解决的是"这类任务通常该怎么做"。</li>
+        <li><code>MCP</code><br>更像"外部工具和数据接口层"，让 Agent 能连接搜索、数据库、浏览器、Notion、业务系统、第三方服务和 API。它解决的是"Agent 能接到哪些外部能力"。</li>
+        <li><code>Agent</code><br>负责理解目标、拆任务、判断什么时候调用哪个 Skill、什么时候调用哪个 MCP，并在需要时真正执行动作，比如读文件、改文件、调工具、跑命令、执行脚本、返回结果。</li>
+        <li><code>知识库</code><br>负责把方法、模板、案例、复盘和产物沉淀下来，形成长期上下文和组织记忆，下一次可以直接复用。</li>
+      </ol>
+
+      <h3 class="chapter-h" id="p5"><span class="num">P5</span>AI 产品经理如何与 Agent 协作共创</h3>
+      <p>工具只是载体，真正决定结果质量的，是产品经理和 Agent 的关系，不是"提需求 -&gt; 等答案"，而是"提问题 -&gt; 补背景 -&gt; 辩方案 -&gt; 压范围 -&gt; 共创结果"。</p>
+
+      <h4 class="sub-heading" id="p5-1"><span class="num">5.1</span>一次高质量共创通常会经历 5 轮</h4>
+      <ol>
+        <li><code>第一轮：抛出任务</code><br>先告诉 Agent 你要解决什么问题。<br>比如：做一个百销产品原型，或输出一份给研发评审的一期 PRD。</li>
+        <li><code>第二轮：补业务背景</code><br>告诉它这是谁的需求、解决什么业务问题、为什么现在做、上下游是谁、成功标准是什么。<br>如果背景不清，再强的 AI 也只能局部猜测。</li>
+        <li><code>第三轮：澄清模糊点</code><br>Agent 会反过来暴露问题：边界不清、字段不够、流程断裂、角色冲突、目标不一致。<br>很多时候，AI 最有价值的地方不是直接给答案，而是逼你把需求讲明白。</li>
+        <li><code>第四轮：互相辩论和纠偏</code><br>产品经理不是被动接收答案，而是要不断反驳、压范围、改优先级。<br>比如：
+          <ul>
+            <li>这个方案太像后台，不像一线业务使用界面</li>
+            <li>这个流程太长，一期做不完</li>
+            <li>这个交互很完整，但没有解决最关键的转化问题</li>
+          </ul>
+        </li>
+        <li><code>第五轮：收敛成结果</code><br>最后才进入文档、原型、页面、代码、验收标准这些交付物。<br>结果不是"AI 一次生成的"，而是"产品经理和 Agent 多轮共创出来的"。</li>
+      </ol>
+      <div class="callout">
+        <strong>本节小节：</strong><br>
+        <code>产品经理和 Agent 的关系，不是"提需求 -&gt; 等答案"，而是"提问题 -&gt; 补背景 -&gt; 辩方案 -&gt; 压范围 -&gt; 共创结果"。</code>
+      </div>
+
+      <h4 class="sub-heading" id="p5-2"><span class="num">5.2</span>AI 产品工作五件套</h4>
+      <ol>
+        <li>
+          <code>工作目录</code> · 让 AI 先读懂你的世界
+          <p style="margin: 8px 0 6px;">AI 必须知道资料、代码、原型、知识库分别在哪里。<strong>如果没有工作目录，AI 每次都像新同事入职；如果有目录和规则，AI 每次都能从组织记忆开始工作。</strong></p>
+          <p style="margin: 0 0 6px;">很多 AI 产出不稳定，不是模型差，而是它不知道你的项目结构、不知道哪些文件不能改、不知道真实资料在哪里。</p>
+          <p style="margin: 0 0 6px;">例如当前 Playground 工作区：<code>projects/</code> 放项目，<code>clients/百融百智/</code> 放业务资料，<code>obsidian/</code> 放知识沉淀，<code>ai/</code> 放工具说明。</p>
+          <div class="table-wrap" style="margin: 10px 0 6px;">
+            <table>
+              <thead><tr><th>目录</th><th>用途</th></tr></thead>
+              <tbody>
+                <tr><td><code>projects/</code></td><td>可运行项目</td></tr>
+                <tr><td><code>clients/百融百智/</code></td><td>业务资料、原型、提示词、研究</td></tr>
+                <tr><td><code>obsidian/</code></td><td>知识库、索引、复盘、方法论</td></tr>
+                <tr><td><code>ai/</code></td><td>AI 工具上下文和目录说明</td></tr>
+                <tr><td><code>archive/</code></td><td>历史备份</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </li>
+        <li><code>背景材料</code><br>产品工作最怕凭空生成。<br>AI 应该先读已有 PRD、原型、会议纪要、竞品资料，再开始输出。</li>
+        <li><code>任务说明</code><br>不只是写"帮我做什么"，而是要把目标用户、业务背景、关键场景、输出对象、上下游关系和约束讲清楚。<br>很多产品任务做不准，不是 AI 不够强，而是我们没有把业务逻辑链路交代完整。<br>只要背景没说明白、逻辑没捋清，再强的 AI 也只能局部猜测，最后产出往往"看起来很完整"，但并不真正可用。</li>
+        <li><code>验收标准</code><br>要明确格式、完整性、测试项和风险项。<br>这些标准越清晰，AI 的产出越接近真实交付。</li>
+        <li><code>留痕机制</code><br>一次对话结束后，提示词、版本、产物和复盘都要沉淀下来。<br>否则下次又要从零开始。</li>
+      </ol>
+      <div class="callout">
+        <strong>本节小结：</strong><br>
+        <code>AI 提效不是一句提示词，而是一套有上下文、有边界、有验收、有沉淀的工作系统。</code>
+      </div>
+
+      <h4 class="sub-heading" id="p5-3"><span class="num">5.3</span>人机协作边界</h4>
+      <div class="grid-2">
+        <div class="card">
+          <span class="tag">AI 适合</span>
+          <ol>
+            <li>批量读取和整理资料</li>
+            <li>生成结构化初稿</li>
+            <li>提醒遗漏和风险</li>
+            <li>转换格式和口径</li>
+            <li>做重复性检查</li>
+          </ol>
+        </div>
+        <div class="card">
+          <span class="tag">PM 必须负责</span>
+          <ol>
+            <li>用户价值判断</li>
+            <li>业务优先级</li>
+            <li>关键取舍</li>
+            <li>事实核验</li>
+            <li>对外承诺和最终结论</li>
+          </ol>
+        </div>
+      </div>
+
+      <h4 class="sub-heading" id="p5-4"><span class="num">5.4</span>要建立的使用认知</h4>
+      <ol>
+        <li>AI 不是速记员，也不是你说一句它写一句。</li>
+        <li>AI 也不是绝对权威，它会给出很多看似合理、其实不符合业务现实的方案。</li>
+        <li>Agent 最强的价值，在于帮助 PM 暴露模糊点、发现冲突、提出备选方案、推动结果收敛。</li>
+        <li>产品经理的核心能力没有消失，只是从"亲自写所有内容"转成了"组织问题、提供判断、推动共创"。</li>
+      </ol>
+
+      <h3 class="chapter-h" id="p6"><span class="num">P6</span>实践案例</h3>
+      <div class="asset-note">
+        <span class="asset-icon">📦</span>
+        <div>
+          <strong>本章引用了多个截图、对话与文档，已打包在与本 HTML 同目录下的 <code>assets/</code> 文件夹中。</strong><br>
+          如果分发，请把 <code>index-training.html</code> 与 <code>assets/</code> 整体打包压缩后再发送，对方解压到同一目录即可点击访问。
+        </div>
+      </div>
+
+      <h4 class="sub-heading" id="p6-1"><span class="num">6.1</span>从桌面散乱资料到产品分析报告</h4>
+      <p>任务交互对话：</p>
+      <div class="img-row">
+        <figure>
+          <img src="./assets/Pasted%20image%2020260424114840.png" alt="任务交互对话 1" style="max-width: 397px;">
+          <figcaption>Pasted image 20260424114840.png</figcaption>
+        </figure>
+        <figure>
+          <img src="./assets/Pasted%20image%2020260424115012.png" alt="任务交互对话 2" style="max-width: 366px;">
+          <figcaption>Pasted image 20260424115012.png</figcaption>
+        </figure>
+      </div>
+      <ul>
+        <li><a class="path-link" href="./assets/%E7%99%BE%E8%9E%8D%E7%99%BE%E6%99%BA_%E4%BA%A7%E5%93%81%E5%88%86%E6%9E%90%E6%8A%A5%E5%91%8A_20260306.md">百融百智_产品分析报告_20260306.md</a></li>
+        <li><a class="path-link" href="./assets/%E7%99%BE%E8%9E%8D%E7%99%BE%E6%99%BA_%E4%BA%A7%E5%93%81%E5%88%86%E6%9E%90%E6%8A%A5%E5%91%8A_PPT%E5%A4%A7%E7%BA%B2_20260306.md">百融百智_产品分析报告_PPT大纲_20260306.md</a></li>
+        <li><a class="path-link" href="./assets/%E7%99%BE%E8%9E%8D%E7%99%BE%E6%99%BA_%E4%BA%A7%E5%93%81%E5%88%86%E6%9E%90%E6%8A%A5%E5%91%8A_%E6%BC%94%E8%AE%B2%E7%A8%BF_20260306.md">百融百智_产品分析报告_演讲稿_20260306.md</a></li>
+      </ul>
+
+      <h4 class="sub-heading" id="p6-2"><span class="num">6.2</span>百销，从想法到产品原型</h4>
+      <p>任务交互对话：</p>
+      <a class="embed-link" href="./assets/%E7%99%BE%E9%94%80_%E6%A0%B8%E5%BF%83%E8%AE%BE%E8%AE%A1%E4%BC%9A%E8%AF%9D_Cursor.html" target="_blank" rel="noreferrer">百销_核心设计会话_Cursor.html</a>
+
+      <h4 class="sub-heading" id="p6-3"><span class="num">6.3</span>百智企业知识库，复杂系统逻辑的设计到 PRD 输出</h4>
+      <p>从已有产品骨架出发，先拆空间、再拆角色，再把需求抽成对象和动作闭环，用多轮收敛的方式，让 AI 从"页面生成器"升级成"产品方案共创工具"。——先锁母体，后定目标；先拆空间，后拆角色；先建对象，后串流程；先做前台，后补后台；先出结构，后做收敛。</p>
+      <p>来源：</p>
+      <a class="embed-link" href="./assets/%E7%99%BE%E6%99%BA_%E4%BC%81%E4%B8%9A%E7%9F%A5%E8%AF%86%E5%BA%93%E8%AE%BE%E8%AE%A1%E4%BC%9A%E8%AF%9D_Cursor.html" target="_blank" rel="noreferrer">百智_企业知识库设计会话_Cursor.html</a>
+
+      <h4 class="sub-heading" id="p6-4"><span class="num">6.4</span>从 HTML 高保真原型到可部署 Web MVP</h4>
+      <p>真实交互对话：</p>
+      <div class="img-row">
+        <figure>
+          <img src="./assets/Pasted%20image%2020260424181841.png" alt="真实交互对话" style="max-width: 356px;">
+          <figcaption>Pasted image 20260424181841.png</figcaption>
+        </figure>
+      </div>
+      <p><a href="https://braisales.vercel.app/baixiao" target="_blank" rel="noreferrer">https://braisales.vercel.app/baixiao</a></p>
+
+      <p>交付对比</p>
+      <ol>
+        <li><code>HTML 高保真原型</code> 适合快速分享、评审、汇报和收集反馈，优势是打开即看、传播成本低。适合在需求尚未完全收敛时快速达成共识。</li>
+        <li><code>上线Demo</code> 适合直接部署上线，用于官网、活动页、产品介绍页、轻量工具页等场景。 可以真实访问，但业务逻辑相对简单，通常不依赖复杂历史系统</li>
+        <li><code>产品化项目 / 业务系统接入型交付</code> 同样是要部署上线，但更适合接入已有接口、账户体系、数据库、权限体系和复杂业务流程。 要考虑历史包袱、系统兼容、数据流转和工程约束，最终不是"做一个页面"，而是"接进现有产品体系"。</li>
+      </ol>
+
+      <h3 class="chapter-h" id="p7"><span class="num">P7</span>收尾</h3>
+      <p>总结：</p>
+      <div class="callout">
+        <p>我更愿意这样概括产品经理的「AI 能力」：本质不在会不会写提示词，而在能否完成三次<strong>转化</strong>——把<strong>模糊需求</strong>落成<strong>清晰任务</strong>，把<strong>散乱资料</strong>织成<strong>可信上下文</strong>，把<strong>一次性产出</strong>沉淀为<strong>个人/团队资产</strong>。</p>
+        <p style="margin-top:14px;">与此同时，也请守住你用时间与案例养出来的<strong>用户 sense、商业 sense、审美与品味、独立判断，以及系统化的结构化思维</strong>。模型与工具可以日更，但这些无法被一键安装；无论技术周期如何切换，它们才是你真正属于自己的<strong>护城河</strong>，也是最难被复制的<strong>竞争壁垒</strong>。</p>
+      </div>
+      <p>下一步建议：</p>
+      <ol>
+        <li>每个 PM 选一个真实工作任务做 AI 改造</li>
+        <li>每周沉淀 1 个高质量提示词或工作流</li>
+        <li>每月复盘 1 次 AI 提效案例，形成团队模板库</li>
+      </ol>
+    </section>
+
+    <!-- ===== GOVERNANCE ===== -->
+    <section class="block" id="governance">
+      <div class="section-header">
+        <span class="num">02</span>
+        <h2>AI 产品工作流治理规范</h2>
+        <span class="lede">信息安全、事实核验、PRD 与原型治理、上线规范、产物评审 Rubric。</span>
+      </div>
+
+      <h3>1. 信息安全边界</h3>
+      <p>禁止输入或上传：</p>
+      <ol>
+        <li>真实 API Key、数据库密码、token。</li>
+        <li>未脱敏客户个人信息。</li>
+        <li>未授权合同和商业敏感条款。</li>
+        <li>公司内部未公开财务数据。</li>
+        <li>生产环境 <code>.env.local</code>。</li>
+      </ol>
+      <p>允许在安全范围内使用：</p>
+      <ol>
+        <li>脱敏后的业务样例。</li>
+        <li>已公开的竞品资料。</li>
+        <li>内部可共享的 PRD 和原型。</li>
+        <li>经过授权的客户资料。</li>
+        <li>本地项目结构和非敏感代码。</li>
+      </ol>
+
+      <h3>2. 事实核验规范</h3>
+      <p>必须核验的内容：</p>
+      <ol>
+        <li>法规、政策、合规结论。</li>
+        <li>价格、套餐、商业条款。</li>
+        <li>竞品最新功能。</li>
+        <li>市场规模和行业数据。</li>
+        <li>对外发布文案中的事实表述。</li>
+        <li>技术可行性和上线配置。</li>
+      </ol>
+      <p>来源记录最低要求：</p>
+      <ol>
+        <li>来源名称。</li>
+        <li>完整 URL 或本地文件路径。</li>
+        <li>查询时间。</li>
+        <li>数据所在章节或页面位置。</li>
+        <li>是否为 AI 推断。</li>
+      </ol>
+
+      <h3>3. PRD 和原型治理</h3>
+
+      <h4>3.1 PRD 产出检查</h4>
+      <p>PRD 必须包含：</p>
+      <ol>
+        <li>背景和目标。</li>
+        <li>目标用户和场景。</li>
+        <li>本期范围。</li>
+        <li>不做范围。</li>
+        <li>用户流程。</li>
+        <li>页面结构。</li>
+        <li>字段说明。</li>
+        <li>权限规则。</li>
+        <li>异常状态。</li>
+        <li>验收标准。</li>
+        <li>风险和待确认问题。</li>
+      </ol>
+
+      <h4>3.2 原型产出检查</h4>
+      <p>原型必须说明：</p>
+      <ol>
+        <li>适用端：PC、移动端或响应式。</li>
+        <li>核心入口。</li>
+        <li>页面跳转。</li>
+        <li>表单和提交动作。</li>
+        <li>列表和详情页。</li>
+        <li>数据是否为 mock。</li>
+        <li>哪些交互只是演示。</li>
+        <li>后续真实产品需要补什么。</li>
+      </ol>
+
+      <h3>4. AI 产物评审 Rubric</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>维度</th><th>检查问题</th></tr></thead>
+          <tbody>
+            <tr><td>完整性</td><td>是否覆盖任务要求和关键场景</td></tr>
+            <tr><td>准确性</td><td>是否有事实错误或未经验证结论</td></tr>
+            <tr><td>结构性</td><td>是否便于评审、执行和交接</td></tr>
+            <tr><td>可落地性</td><td>是否有字段、流程、验收和边界</td></tr>
+            <tr><td>风险控制</td><td>是否暴露不确定性和待确认项</td></tr>
+            <tr><td>可复用性</td><td>是否沉淀为模板或工作流</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ===== PROMPTS ===== -->
+    <section class="block" id="prompts">
+      <div class="section-header">
+        <span class="num">03</span>
+        <h2>Prompt工程：从口头需求到结构化契约</h2>
+      </div>
+      <p>使用原则：每个模板都应该补充真实文件路径、业务背景、版本边界和验收标准。不要直接把模板当万能咒语。</p>
+
+      <details class="collapsible">
+        <summary>1. 开工上下文模板 <span class="tag-pill">CONTEXT</span></summary>
+        <div class="body">
+          <p>适合：任何需要 AI 读本地资料或项目文件的任务。</p>
+          <div class="codeblock"><button class="copy-btn" data-copy>Copy</button><span class="src">请在 /Users/admin/Documents/Playground 这个统一工作区内工作。
+
+开始前先阅读：
+/Users/admin/Documents/Playground/AGENTS.md
+/Users/admin/Documents/Playground/ai/global-context.md
+/Users/admin/Documents/Playground/ai/workspace-map.md
+
+本次任务属于：
+&lt;projects/&lt;项目名&gt; / clients/百融百智 / obsidian/40-AI工作流&gt;
+
+请遵守：
+1. 不删除文件。
+2. 不重命名中文目录和文件。
+3. 不读取或输出真实密钥。
+4. 如果要改代码，先检查项目 README、AGENTS、CLAUDE 和 .env.example。
+5. 如果要输出知识类资料，优先写入 obsidian。</span></div>
+        </div>
+      </details>
+
+      <details class="collapsible">
+        <summary>2. 资料整理模板 <span class="tag-pill">RESEARCH</span></summary>
+        <div class="body">
+          <p>适合：把一堆产品资料、会议纪要、竞品材料整理成汇报材料。</p>
+          <div class="codeblock"><button class="copy-btn" data-copy>Copy</button><span class="src">请基于以下资料目录，整理一份产品分析摘要。
+
+资料路径：
+&lt;列出目录或文件&gt;
+
+输出对象：
+&lt;老板 / 产品团队 / 销售团队 / 研发团队&gt;
+
+请输出：
+1. 产品一句话定位
+2. 目标用户和核心场景
+3. 核心能力结构
+4. 差异化优势
+5. 当前问题
+6. 关键风险
+7. 下一步建议
+8. 可用于 PPT 的 8 到 12 页大纲
+
+要求：
+1. 只基于我提供的本地资料总结。
+2. 如果资料不足，请列出缺口。
+3. 不要编造数据和案例。
+4. 重要判断要标注来自哪个文件。</span></div>
+        </div>
+      </details>
+
+      <details class="collapsible">
+        <summary>3. 竞品分析模板 <span class="tag-pill">COMPETITOR</span></summary>
+        <div class="body">
+          <div class="codeblock"><button class="copy-btn" data-copy>Copy</button><span class="src">请帮我做竞品分析。
+
+我的产品：
+&lt;产品名称和定位&gt;
+
+竞品：
+&lt;竞品列表或资料路径&gt;
+
+分析目标：
+&lt;为了定价 / 为了功能规划 / 为了销售话术 / 为了老板汇报&gt;
+
+请按以下维度输出表格：
+1. 定位
+2. 目标用户
+3. 核心功能
+4. AI 能力
+5. 数据和知识库能力
+6. 协作能力
+7. 商业模式
+8. 优势
+9. 弱点
+10. 对我方的启发
+
+最后请输出：
+1. 我方应该学习什么
+2. 我方应该避免什么
+3. 一期可落地机会点
+4. 需要进一步验证的问题</span></div>
+        </div>
+      </details>
+
+      <details class="collapsible">
+        <summary>4. 用户反馈归纳模板 <span class="tag-pill">FEEDBACK</span></summary>
+        <div class="body">
+          <div class="codeblock"><button class="copy-btn" data-copy>Copy</button><span class="src">请整理以下用户反馈，输出产品改进建议。
+
+用户反馈来源：
+&lt;粘贴反馈或提供文件路径&gt;
+
+请输出：
+1. 高频问题分类
+2. 每类问题的典型原话
+3. 影响的用户场景
+4. 严重程度
+5. 可能原因
+6. 可落地解决方案
+7. 一期优先级建议
+8. 需要继续追问用户的问题
+
+要求：
+1. 不要把单个用户意见直接当成共性结论。
+2. 区分"用户明确说的"和"AI 推测的"。
+3. 最后给出 P0/P1/P2 优先级表。</span></div>
+        </div>
+      </details>
+
+      <details class="collapsible">
+        <summary>5. PRD 初稿模板 <span class="tag-pill">PRD</span></summary>
+        <div class="body">
+          <div class="codeblock"><button class="copy-btn" data-copy>Copy</button><span class="src">请基于以下背景输出一份一期 PRD 初稿。
+
+产品/模块名称：
+&lt;名称&gt;
+
+业务背景：
+&lt;背景&gt;
+
+目标用户：
+&lt;用户&gt;
+
+核心场景：
+&lt;场景&gt;
+
+输入资料：
+&lt;PRD/原型/会议纪要/竞品资料路径&gt;
+
+本期只做：
+1. &lt;范围一&gt;
+2. &lt;范围二&gt;
+3. &lt;范围三&gt;
+
+本期不做：
+1. &lt;不做范围一&gt;
+2. &lt;不做范围二&gt;
+
+请输出：
+1. 文档信息（版本、作者、日期）
+2. 需求背景一句话（精炼描述，研发扫一眼就懂）
+3. 产品背景（详细背景，供研发理解业务）
+4. 目标和非目标
+5. 用户画像
+6. 功能清单（清单格式，每条可追溯）
+7. 页面清单（清单格式，含页面名称和核心内容）
+8. 用户故事
+9. 用户流程
+10. 字段说明
+11. 数据表/字段建议（从数据库结构视角，建议表名和核心字段）
+12. API建议（接口名称、方法、请求/响应结构概要）
+13. 状态和异常
+14. 权限规则
+15. 埋点清单（事件名、触发时机、携带参数）
+16. 验收标准
+17. 技术风险（区别于业务风险，指实现层风险）
+18. 需要研发确认的问题
+
+要求：
+如果输入资料和目标冲突，先列出冲突点，不要直接生成。</span></div>
+        </div>
+      </details>
+
+      <details class="collapsible">
+        <summary>6. 原型生成模板 <span class="tag-pill">PROTOTYPE</span></summary>
+        <div class="body">
+          <div class="codeblock"><button class="copy-btn" data-copy>Copy</button><span class="src">请基于以下产品需求，输出一个可打开的 HTML 原型文件。
+
+产品定位：
+&lt;定位&gt;
+
+核心能力：
+1. &lt;能力一&gt;
+2. &lt;能力二&gt;
+3. &lt;能力三&gt;
+
+关键页面：
+1. &lt;页面一&gt;
+2. &lt;页面二&gt;
+3. &lt;页面三&gt;
+
+关键交互：
+1. &lt;点击入口后发生什么&gt;
+2. &lt;表单提交后发生什么&gt;
+3. &lt;列表点击后进入哪里&gt;
+
+设计风格参考：
+&lt;参考产品或视觉关键词&gt;
+
+输出要求：
+1. 生成单个 HTML 文件。
+2. 必须包含移动端适配。
+3. 必须有真实可点击交互。
+4. 交互数据可用 mock，但要标注哪些是 mock。
+5. 不要引用 file:/// 本地图片。
+6. 完成后检查脚本语法。</span></div>
+        </div>
+      </details>
+
+      <details class="collapsible">
+        <summary>7. 从原型迁移到 Web MVP 模板 <span class="tag-pill">MVP</span></summary>
+        <div class="body">
+          <div class="codeblock"><button class="copy-btn" data-copy>Copy</button><span class="src">请基于我的本地高保真 HTML 原型，迁移成一个真实可部署的 Web MVP。
+
+原型文件：
+&lt;HTML 路径&gt;
+
+当前项目：
+&lt;Next.js / React / Vue 项目路径&gt;
+
+上线要求：
+1. 第一版必须能部署上线。
+2. 必须支持登录。
+3. 必须保存真实数据。
+4. 必须做用户数据隔离。
+5. 每张用户数据表必须有 user_id。
+6. 必须开启 RLS。
+7. 用户只能看到自己的数据。
+8. 必须提供数据库初始化 SQL。
+9. 必须通过 lint 和 build。
+
+第一版只保留：
+1. 关键页面
+2. 关键表单
+3. 关键列表
+4. 核心提交动作
+
+必须去掉：
+1. file:/// 本地图片路径
+2. 纯前端假数据
+3. 刷新即丢失的状态
+
+完成标准：
+1. 说明改了哪些文件。
+2. 给出数据库表和权限说明。
+3. 给出本地和线上验收清单。
+4. 跑完 lint/build 并报告结果。</span></div>
+        </div>
+      </details>
+
+      <details class="collapsible">
+        <summary>8. 上线验收模板 <span class="tag-pill">RELEASE</span></summary>
+        <div class="body">
+          <div class="codeblock"><button class="copy-btn" data-copy>Copy</button><span class="src">请基于以下产品需求和实现说明，输出上线验收清单。
+
+需求路径：
+&lt;PRD 或 issue&gt;
+
+代码/项目路径：
+&lt;项目路径&gt;
+
+请输出：
+1. 核心用户路径
+2. 功能验收项
+3. 数据验收项
+4. 权限验收项
+5. 异常状态验收项
+6. 移动端兼容项
+7. 埋点验收项
+8. 上线前配置项
+9. 回滚方案
+10. 未解决风险
+
+如果可以，请检查项目中的测试、lint、build 命令，并告诉我应该运行哪些命令。</span></div>
+        </div>
+      </details>
+
+      <details class="collapsible">
+        <summary>9. 复盘沉淀模板 <span class="tag-pill">RETRO</span></summary>
+        <div class="body">
+          <div class="codeblock"><button class="copy-btn" data-copy>Copy</button><span class="src">请帮我把这次产品任务做成复盘文档。
+
+任务背景：
+&lt;背景&gt;
+
+本次产物：
+&lt;PRD/原型/代码/上线链接/会议纪要&gt;
+
+过程记录：
+&lt;关键对话或操作&gt;
+
+请输出：
+1. 目标是否达成
+2. 最终交付物
+3. 关键决策
+4. 遇到的问题
+5. 解决方式
+6. 可复用经验
+7. 可复用提示词
+8. 后续优化建议
+9. 需要纳入团队规范的事项
+
+要求：
+复盘要能让一个没参与的人快速接手。</span></div>
+        </div>
+      </details>
+
+      <details class="collapsible">
+        <summary>10. 质量检查提示词 <span class="tag-pill">QA</span></summary>
+        <div class="body">
+          <div class="codeblock"><button class="copy-btn" data-copy>Copy</button><span class="src">请对上面的产物做质量检查。
+
+请按以下维度检查：
+1. 是否回答了原始任务
+2. 是否遗漏关键用户场景
+3. 是否有事实未经验证
+4. 是否有自相矛盾
+5. 是否有范围蔓延
+6. 是否缺少异常状态
+7. 是否缺少验收标准
+8. 是否需要人工确认
+
+请输出：
+1. 严重问题
+2. 一般问题
+3. 建议优化
+4. 可以交付的部分
+5. 不建议直接交付的部分</span></div>
+        </div>
+      </details>
+
+      <details class="collapsible">
+        <summary>0. 好提示词自检 <span class="tag-pill">SELF-CHECK</span></summary>
+        <div class="body">
+          <p>每次发给 AI 前，快速检查：</p>
+          <ol>
+            <li>我有没有告诉 AI 资料在哪里？</li>
+            <li>我有没有告诉 AI 这次产物给谁用？</li>
+            <li>我有没有说清楚本期只做什么？</li>
+            <li>我有没有说清楚不做什么？</li>
+            <li>我有没有要求它列出资料缺口？</li>
+            <li>我有没有给输出格式？</li>
+            <li>我有没有给验收标准？</li>
+            <li>我有没有要求它不要编造？</li>
+          </ol>
+        </div>
+      </details>
+
+    </section>
+
+    <!-- ===== SKILLS ===== -->
+    <section class="block" id="skills">
+      <div class="section-header">
+        <span class="num">04</span>
+        <h2>Skill 总览</h2>
+        <span class="lede">原创开源 Skill + 社区推荐 Skill，按优先级逐步掌握。</span>
+      </div>
+
+      <h3>一、原创开源 Skill</h3>
+      <p>已开源到 GitHub：<a href="https://github.com/zw08250727/product-ai-skills" target="_blank" rel="noreferrer"><code>github.com/zw08250727/product-ai-skills</code></a>。</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>#</th><th>名称</th><th>仓库地址</th><th>核心能力</th></tr></thead>
+          <tbody>
+            <tr>
+              <td>1</td>
+              <td>product-ai-prototyping</td>
+              <td><a href="https://github.com/zw08250727/product-ai-skills/tree/main/skills/product-ai-prototyping" target="_blank" rel="noreferrer"><code>product-ai-skills/skills/product-ai-prototyping</code></a></td>
+              <td>产品需求收敛 → AI 原型任务 + PRD 提示模板</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h4>触发场景对照</h4>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Skill</th><th>触发关键词</th></tr></thead>
+          <tbody>
+            <tr><td>product-ai-prototyping</td><td>产品发现、功能扩展、PRD 范围界定、交互设计、角色/状态设计、流程定义、前后端边界决策</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h4>详细说明</h4>
+      <h4>1. product-ai-prototyping</h4>
+      <p><strong>描述</strong>：将产品经理的模糊想法，收敛为可执行的 AI 原型任务、产品方案与提示模板。</p>
+      <p><strong>核心输出顺序</strong>：</p>
+      <ol>
+        <li>改造目标 → 2. 场景划分 → 3. 角色划分 → 4. 核心对象 → 5. 关键流程 → 6. 功能调整 → 7. 逻辑调整 → 8. 系统边界 → 9. 高保真原型建议 → 10. 一期/二期建议</li>
+      </ol>
+      <p><strong>关联文件</strong>：<code>references/methodology.md</code>（方法论完整版）、<code>references/prompt-template.md</code>（可复制给 AI 的提示模板）</p>
+
+      <h3>二、推荐的 Skill</h3>
+      <blockquote>可通过各 AI 工具的技能中心安装，或从 GitHub 下载后本地安装。建议按优先级逐步掌握。</blockquote>
+
+      <h4>快速安装表</h4>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>优先级</th><th>Skill</th><th>GitHub</th><th>类型</th><th>已安装</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>★★★★★</td>
+              <td>web-design-skill</td>
+              <td><a href="https://github.com/ConardLi/web-design-skill" target="_blank" rel="noreferrer">ConardLi/web-design-skill</a></td>
+              <td>网页视觉设计</td>
+              <td>✅</td>
+            </tr>
+            <tr>
+              <td>★★★★★</td>
+              <td>brand-design-md</td>
+              <td><a href="https://github.com/zephyrwang6/brand-design-md/blob/main/SKILL.md" target="_blank" rel="noreferrer">zephyrwang6/brand-design-md</a></td>
+              <td>品牌风格 UI 生成</td>
+              <td>✅</td>
+            </tr>
+            <tr>
+              <td>★★★★</td>
+              <td>stitch-skills</td>
+              <td><a href="https://github.com/google-labs-code/stitch-skills" target="_blank" rel="noreferrer">google-labs-code/stitch-skills</a></td>
+              <td>AI UI 设计工作流</td>
+              <td>✅</td>
+            </tr>
+            <tr>
+              <td>★★★★</td>
+              <td>anthropics/frontend-design</td>
+              <td><a href="https://github.com/anthropics/skills/tree/main/skills/frontend-design" target="_blank" rel="noreferrer">anthropics/skills/frontend-design</a></td>
+              <td>前端开发设计</td>
+              <td>✅</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h4>详细说明</h4>
+
+      <h4>1. web-design-skill（Claude Design 落地版）</h4>
+      <p><strong>GitHub</strong>：<a href="https://github.com/ConardLi/web-design-skill" target="_blank" rel="noreferrer">https://github.com/ConardLi/web-design-skill</a></p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>属性</th><th>内容</th></tr></thead>
+          <tbody>
+            <tr><td>类型</td><td>网页视觉设计</td></tr>
+            <tr><td>描述</td><td>将 Claude Design 的设计理念封装为可复用的 Skill，让 AI 生成网页告别"廉价发光"和"土味渐变"，拥有顶级视觉体验</td></tr>
+            <tr><td>背景</td><td>由前端开发者 ConardLi 从 Claude Design 420行系统提示词中提炼核心设计理念</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p><strong>使用场景</strong>：官网/Landing Page 设计 · 营销活动页 · Portfolio 个人作品集 · 需要高级感的任何网页场景</p>
+
+      <h4>2. brand-design-md</h4>
+      <p><strong>GitHub</strong>：<a href="https://github.com/zephyrwang6/brand-design-md/blob/main/SKILL.md" target="_blank" rel="noreferrer">https://github.com/zephyrwang6/brand-design-md/blob/main/SKILL.md</a></p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>属性</th><th>内容</th></tr></thead>
+          <tbody>
+            <tr><td>类型</td><td>品牌风格 UI 生成</td></tr>
+            <tr><td>描述</td><td>根据品牌名称自动获取 62 个世界顶级品牌的设计规范（DESIGN.md），并生成匹配该品牌风格的 UI 代码。支持中英文品牌名、多品牌混搭风格</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p><strong>支持品牌分类</strong>：</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>分类</th><th style="text-align:center;">数量</th><th>代表品牌</th></tr></thead>
+          <tbody>
+            <tr><td>科技 / AI 产品</td><td style="text-align:center;">31</td><td>Apple、Claude、Cursor、Figma、Notion、Linear、Vercel</td></tr>
+            <tr><td>开发者工具</td><td style="text-align:center;">14</td><td>Stripe、Supabase、Replicate、Mintlify</td></tr>
+            <tr><td>金融 / 加密</td><td style="text-align:center;">5</td><td>Coinbase、Binance、Revolut</td></tr>
+            <tr><td>消费品 / 汽车</td><td style="text-align:center;">12</td><td>Tesla、Ferrari、Nike、Airbnb、Spotify</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p><strong>触发词</strong>：<code>"XX风格"</code> <code>"做成XX的感觉"</code> <code>"参考XX设计"</code> <code>"XX + XX 混搭"</code></p>
+      <p><strong>使用场景</strong>：快速获取目标品牌的设计规范 · 生成匹配品牌风格的 UI 代码（HTML/React/Vue）· 品牌升级项目的视觉参考 · 营销活动页设计灵感</p>
+
+      <h4>3. stitch-skills（Google Stitch 官方技能库）</h4>
+      <p><strong>GitHub</strong>：<a href="https://github.com/google-labs-code/stitch-skills" target="_blank" rel="noreferrer">https://github.com/google-labs-code/stitch-skills</a></p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>属性</th><th>内容</th></tr></thead>
+          <tbody>
+            <tr><td>类型</td><td>AI UI 设计工作流</td></tr>
+            <tr><td>描述</td><td>Google Labs 推出的 AI 原生 UI 设计技能库，遵循 Agent Skills 开放标准，兼容 Claude Code、Gemini CLI、Cursor 等主流 AI 编码工具</td></tr>
+            <tr><td>背景</td><td>Google 2026年3月推出"氛围设计"（Vibe Design）理念</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p><strong>子技能推荐</strong>：</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>子技能</th><th>功能</th></tr></thead>
+          <tbody>
+            <tr><td>design-md</td><td>从设计稿/描述生成 DESIGN.md</td></tr>
+            <tr><td>stitch-loop</td><td>与 Stitch AI 设计工具迭代协作</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p><strong>使用场景</strong>：与 Stitch AI 设计工具协作 · 快速生成 DESIGN.md 设计规范 · UI 设计迭代与优化 · 设计系统建设</p>
+
+      <h4>4. anthropics/frontend-design（Anthropic 官方）</h4>
+      <p><strong>GitHub</strong>：<a href="https://github.com/anthropics/skills/tree/main/skills/frontend-design" target="_blank" rel="noreferrer">https://github.com/anthropics/skills/tree/main/skills/frontend-design</a></p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>属性</th><th>内容</th></tr></thead>
+          <tbody>
+            <tr><td>类型</td><td>前端开发设计</td></tr>
+            <tr><td>描述</td><td>Anthropic 官方 Skills 仓库中的前端设计技能，指导 AI 生成高质量前端代码</td></tr>
+            <tr><td>背景</td><td>Anthropic 官方维护的 Skills 库，涵盖设计、开发、文档等多个领域</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p><strong>使用场景</strong>：Web 应用开发 · 前端代码规范 · 组件实现指导</p>
+    </section>
+
+    <!-- ===== TRAINING FEEDBACK · 本次培训反馈与分享（站点最末） ===== -->
+    <section class="block training-feedback" id="feedback">
+      <div class="section-header">
+        <span class="num">★ Feedback</span>
+        <h2>本次培训的反馈与分享</h2>
+        <span class="lede">看完这次培训后，欢迎在这里留下你的问题或把你最爱的 AI 工具分享给社区。</span>
+      </div>
+
+      <div class="cta-grid">
+
+        <!-- Card 1: Ask question / Feedback -->
+        <article class="cta-card is-ask">
+          <span class="cta-tag">▌ ASK · 提问</span>
+          <span class="cta-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+              <line x1="12" y1="9" x2="12" y2="13"/>
+              <line x1="12" y1="17" x2="12.01" y2="17"/>
+            </svg>
+          </span>
+          <h3>提出本次培训的问题</h3>
+          <p>对培训内容有疑问、对某个案例想深挖、对方法论有不同看法？把问题留下，会在后续 Q&amp;A 或文章中统一回应。</p>
+          <!-- TODO: 把 action 中的 YOUR_EMAIL 替换为你的接收邮箱（首次提交后会收到 formsubmit 的确认邮件，点击确认即可启用） -->
+          <form class="cta-form" data-form="ask" action="https://formsubmit.co/YOUR_EMAIL" method="POST">
+            <input type="hidden" name="_subject" value="[培训反馈] 如何借助 AI 进行产品工作提效">
+            <input type="hidden" name="_template" value="table">
+            <input type="hidden" name="_captcha" value="false">
+
+            <select name="想反馈的章节" class="cta-input cta-select">
+              <option value="">想反馈 / 提问的章节（选填）</option>
+              <option>P1 写在前面</option>
+              <option>P2 培训目标与核心结论</option>
+              <option>P3 AI 工作流通用闭环</option>
+              <option>P4 我的 AI Agent teams</option>
+              <option>P5 PM × Agent 协作共创</option>
+              <option>P6 实战案例</option>
+              <option>P7 收尾</option>
+              <option>治理规范</option>
+              <option>Prompt工程：从口头需求到结构化契约</option>
+              <option>Skill 总览</option>
+              <option>整体感受 / 其他</option>
+            </select>
+
+            <textarea name="问题或想法" class="cta-input cta-textarea" rows="4" placeholder="你的问题、不同看法、或想深入探讨的点……" required></textarea>
+
+            <input type="text" name="姓名或联系方式" class="cta-input" placeholder="姓名 / 钉钉 / 邮箱（选填，匿名留空）">
+
+            <button type="submit" class="cta-btn">
+              <span>提交问题</span>
+              <span class="arrow">→</span>
+            </button>
+          </form>
+        </article>
+
+        <!-- Card 2: Share AI tools / Skills -->
+        <article class="cta-card is-share">
+          <span class="cta-tag">✦ SHARE · 分享</span>
+          <span class="cta-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="18" cy="5" r="3"/>
+              <circle cx="6" cy="12" r="3"/>
+              <circle cx="18" cy="19" r="3"/>
+              <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
+              <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+            </svg>
+          </span>
+          <h3>分享你的 AI 工具 / Skill</h3>
+          <p>把你最爱的 AI 工具、Prompt、Skill、MCP、工作流、案例分享给社区。被采纳的内容会署名收录到本站的方法库 / Skill 总览。</p>
+          <!-- TODO: 把 action 中的 YOUR_EMAIL 替换为你的接收邮箱（首次提交后会收到 formsubmit 的确认邮件，点击确认即可启用） -->
+          <form class="cta-form" data-form="share" action="https://formsubmit.co/YOUR_EMAIL" method="POST">
+            <input type="hidden" name="_subject" value="[培训分享] AI 工具 / Skill 分享">
+            <input type="hidden" name="_template" value="table">
+            <input type="hidden" name="_captcha" value="false">
+
+            <select name="分享类型" class="cta-input cta-select" required>
+              <option value="">分享类型（必选）</option>
+              <option>AI 工具（GPT / Claude / Cursor / Codex 等）</option>
+              <option>Prompt 模板</option>
+              <option>Skill / MCP</option>
+              <option>工作流 / 案例</option>
+              <option>提效心得 / 踩坑</option>
+            </select>
+
+            <textarea name="标题与详细描述" class="cta-input cta-textarea" rows="4" placeholder="一句话总结 + 详细说明：解决什么问题 / 怎么做 / 效果如何" required></textarea>
+
+            <input type="url" name="相关链接" class="cta-input" placeholder="GitHub / 文档 / 截图等链接（选填）">
+
+            <input type="text" name="姓名或联系方式" class="cta-input" placeholder="姓名 / 钉钉 / 邮箱（选填，用于署名 / 追问细节）">
+
+            <button type="submit" class="cta-btn">
+              <span>立即分享</span>
+              <span class="arrow">→</span>
+            </button>
+          </form>
+        </article>
+
+      </div>
+
+      <p class="community-note">
+        部署提示：两个表单已接入 <a href="https://formsubmit.co/" target="_blank" rel="noreferrer"><code>formsubmit.co</code></a>（免费 / 无需注册 / 表单提交后直发邮件）。请把 HTML 中两处 <code>action="https://formsubmit.co/YOUR_EMAIL"</code> 的 <code>YOUR_EMAIL</code> 替换为你的接收邮箱；首次提交时会收到一封确认邮件，点击确认即可永久启用。
+      </p>
+
+      <div class="footer-note">
+        AI PM Builder OS · 培训资料<br>
+        <span style="font-size: 12px; color: var(--muted);">讲师：张伟 · 建议时长 30 分钟</span>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- ===== WELCOME GATE ===== -->
+<div class="gate-backdrop" id="welcome-gate" role="dialog" aria-modal="true" aria-labelledby="gate-title" aria-describedby="gate-punch gate-lede">
+  <div class="gate-card">
+    <span class="gate-sparkle s1">✨</span>
+    <span class="gate-sparkle s2">⭐</span>
+    <span class="gate-sparkle s3">✨</span>
+
+    <span class="gate-mark" aria-hidden="true">
+      <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="gateMarkGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#0ea5e9"/>
+            <stop offset="55%" stop-color="#6366f1"/>
+            <stop offset="100%" stop-color="#7c3aed"/>
+          </linearGradient>
+        </defs>
+        <rect width="48" height="48" rx="14" fill="url(#gateMarkGrad)" opacity="0.14"/>
+        <path class="gate-mark-edge" d="M12 30 Q24 10 36 30" stroke="url(#gateMarkGrad)" stroke-width="2.25" fill="none" stroke-linecap="round"/>
+        <circle class="gate-mark-node n1" cx="12" cy="30" r="4.5" fill="url(#gateMarkGrad)"/>
+        <circle class="gate-mark-node n2" cx="24" cy="15" r="4.5" fill="url(#gateMarkGrad)"/>
+        <circle class="gate-mark-node n3" cx="36" cy="30" r="4.5" fill="url(#gateMarkGrad)"/>
+      </svg>
+    </span>
+
+    <h2 class="gate-title" id="gate-title">嘿！先认识一下吧</h2>
+    <p class="gate-punch" id="gate-punch">「拥抱 AI 生产力，产品工作提效」</p>
+    <p class="gate-lede" id="gate-lede">
+      留下你的<span class="accent" style="color:var(--accent-2);font-weight:600;">部门和姓名</span>，方便培训后继续交流，也欢迎之后互相学习提效心得 🌱
+    </p>
+
+    <form class="gate-form" id="gate-form" autocomplete="off">
+      <div class="gate-field">
+        <input type="text" id="gate-dept" name="department" placeholder=" " required maxlength="40">
+        <label for="gate-dept">所在部门 / 团队</label>
+      </div>
+      <div class="gate-field">
+        <input type="text" id="gate-name" name="name" placeholder=" " required maxlength="20">
+        <label for="gate-name">姓名 / 花名</label>
+      </div>
+      <button type="submit" class="gate-submit">
+        <span>开始查看培训资料</span>
+        <span class="arrow">→</span>
+      </button>
+    </form>
+
+    <div class="gate-foot">
+      <span class="pin">●</span> 信息仅用于讲师后续交流，不会公开 · 本地浏览器记住，下次无需重填
+    </div>
+  </div>
+</div>
+
+<!-- ===== Mermaid ===== -->
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>
+  if (window.mermaid) {
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: "base",
+      flowchart: { curve: "basis", padding: 14 },
+      themeVariables: {
+        fontFamily: '-apple-system, "PingFang SC", sans-serif',
+        primaryColor: "#ffffff",
+        primaryBorderColor: "#0ea5e9",
+        primaryTextColor: "#0f172a",
+        lineColor: "#7c3aed",
+        edgeLabelBackground: "#ffffff",
+        nodeBorder: "#0ea5e9",
+        clusterBkg: "#f7f8fb"
+      }
+    });
+  }
+</script>
+
+<!-- ===== UI scripts ===== -->
+<script>
+  // ===== Welcome gate =====
+  const VISITOR_KEY = "training_visitor_profile_v1";
+  const gateEl = document.getElementById("welcome-gate");
+  const gateForm = document.getElementById("gate-form");
+  const gateDept = document.getElementById("gate-dept");
+  const gateName = document.getElementById("gate-name");
+  const visitorPill = document.getElementById("visitor-pill");
+  const visitorText = document.getElementById("visitor-text");
+  const visitorReset = document.getElementById("visitor-reset");
+
+  const readVisitor = () => {
+    try { return JSON.parse(localStorage.getItem(VISITOR_KEY) || "null"); }
+    catch (e) { return null; }
+  };
+  const saveVisitor = (v) => {
+    try { localStorage.setItem(VISITOR_KEY, JSON.stringify(v)); } catch (e) {}
+  };
+  const clearVisitor = () => {
+    try { localStorage.removeItem(VISITOR_KEY); } catch (e) {}
+  };
+
+  const showVisitorPill = (v) => {
+    if (!visitorPill) return;
+    visitorText.textContent = `${v.department} · ${v.name}`;
+    visitorPill.hidden = false;
+  };
+  const hideVisitorPill = () => {
+    if (!visitorPill) return;
+    visitorPill.hidden = true;
+  };
+
+  const lockGate = () => {
+    document.body.classList.add("gate-locked");
+    gateEl.classList.add("is-open");
+    setTimeout(() => gateDept && gateDept.focus(), 320);
+  };
+  const unlockGate = () => {
+    gateEl.classList.remove("is-open");
+    document.body.classList.remove("gate-locked");
+  };
+
+  if (gateForm) {
+    gateForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const dept = gateDept.value.trim();
+      const name = gateName.value.trim();
+      if (!dept || !name) return;
+      const profile = { department: dept, name: name, savedAt: new Date().toISOString() };
+      saveVisitor(profile);
+      showVisitorPill(profile);
+      unlockGate();
+    });
+  }
+  if (visitorReset) {
+    visitorReset.addEventListener("click", () => {
+      if (!confirm("清除登记信息后需要重新填写部门和姓名，确认吗？")) return;
+      clearVisitor();
+      hideVisitorPill();
+      gateDept.value = "";
+      gateName.value = "";
+      lockGate();
+    });
+  }
+
+  const existingVisitor = readVisitor();
+  if (existingVisitor && existingVisitor.department && existingVisitor.name) {
+    showVisitorPill(existingVisitor);
+  } else {
+    lockGate();
+  }
+
+  // Progress bar
+  const progress = document.getElementById("progress");
+  const updateProgress = () => {
+    const top = window.scrollY;
+    const docH = document.documentElement.scrollHeight - window.innerHeight;
+    const ratio = docH > 0 ? Math.min(Math.max(top / docH, 0), 1) : 0;
+    progress.style.width = (ratio * 100) + "%";
+  };
+  window.addEventListener("scroll", updateProgress, { passive: true });
+  window.addEventListener("resize", updateProgress);
+  updateProgress();
+
+  // Active section highlight (sidebar + topnav)
+  const sidebarLinks = [...document.querySelectorAll(".sidebar a")];
+  const topnavLinks = [...document.querySelectorAll(".topnav a")];
+  const sectionIds = [
+    "p1","p1-1","p1-2",
+    "p2","p2-1","p2-2",
+    "p3","p3-1","p3-2",
+    "p4","p4-1","p4-2","p4-3",
+    "p5","p5-1","p5-2","p5-3","p5-4",
+    "p6","p6-1","p6-2","p6-3","p6-4",
+    "p7",
+    "governance","prompts","skills",
+    "feedback"
+  ];
+  const sectionEls = sectionIds.map(id => document.getElementById(id)).filter(Boolean);
+  const setActive = (id) => {
+    sidebarLinks.forEach(a => a.classList.toggle("active", a.getAttribute("href") === "#" + id));
+    let topId = "keynote";
+    if (id === "feedback") topId = "feedback";
+    else if (["governance","prompts","skills"].includes(id)) topId = id;
+    topnavLinks.forEach(a => a.classList.toggle("active", a.getAttribute("href") === "#" + topId));
+  };
+  const spy = new IntersectionObserver((entries) => {
+    entries.forEach((e) => {
+      if (e.isIntersecting) setActive(e.target.id);
+    });
+  }, { rootMargin: "-30% 0px -60% 0px", threshold: 0.01 });
+  sectionEls.forEach(s => spy.observe(s));
+
+  // Bio card toggle
+  const bioTrigger = document.getElementById("bio-trigger");
+  const bioCard = document.getElementById("bio-card");
+  if (bioTrigger && bioCard) {
+    const closeBio = () => {
+      bioTrigger.setAttribute("aria-expanded", "false");
+      bioCard.setAttribute("aria-hidden", "true");
+      bioCard.classList.remove("is-open");
+    };
+    const openBio = () => {
+      bioTrigger.setAttribute("aria-expanded", "true");
+      bioCard.setAttribute("aria-hidden", "false");
+      bioCard.classList.add("is-open");
+    };
+    bioTrigger.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const isOpen = bioTrigger.getAttribute("aria-expanded") === "true";
+      isOpen ? closeBio() : openBio();
+    });
+    document.addEventListener("click", (e) => {
+      if (bioTrigger.getAttribute("aria-expanded") !== "true") return;
+      if (bioCard.contains(e.target) || bioTrigger.contains(e.target)) return;
+      closeBio();
+    });
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && bioTrigger.getAttribute("aria-expanded") === "true") {
+        closeBio();
+        bioTrigger.focus();
+      }
+    });
+  }
+
+  // CTA forms (formsubmit.co AJAX)
+  document.querySelectorAll(".cta-form").forEach((form) => {
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const submitBtn = form.querySelector(".cta-btn");
+      const formType = form.dataset.form;
+
+      // Detect un-configured placeholder
+      if (form.action.includes("YOUR_EMAIL")) {
+        showFormError(form, '该表单尚未配置接收邮箱。请把 form action 中的 YOUR_EMAIL 替换为你的真实邮箱。');
+        return;
+      }
+
+      const originalHtml = submitBtn.innerHTML;
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<span>提交中…</span>';
+
+      try {
+        const ajaxUrl = form.action.replace("formsubmit.co/", "formsubmit.co/ajax/");
+        const formData = new FormData(form);
+        const response = await fetch(ajaxUrl, {
+          method: "POST",
+          body: formData,
+          headers: { "Accept": "application/json" }
+        });
+        const data = await response.json().catch(() => ({}));
+        if (response.ok && (data.success === "true" || data.success === true)) {
+          showFormSuccess(form, formType);
+        } else {
+          throw new Error(data.message || "提交失败");
+        }
+      } catch (err) {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalHtml;
+        showFormError(form, '提交失败，请稍后再试，或检查表单 action 是否已正确替换。');
+      }
+    });
+  });
+
+  function showFormSuccess(form, type) {
+    const msg = type === "share"
+      ? '<div><strong>已收到分享！</strong>感谢贡献，讲师会择优整理并回信交流。</div>'
+      : '<div><strong>已收到反馈！</strong>感谢留言。讲师会在后续 Q&amp;A 或邮件中统一回应。</div>';
+    const successEl = document.createElement("div");
+    successEl.className = "cta-form-success";
+    successEl.innerHTML = msg;
+    form.replaceWith(successEl);
+  }
+
+  function showFormError(form, text) {
+    let errEl = form.querySelector(".cta-form-error");
+    if (!errEl) {
+      errEl = document.createElement("div");
+      errEl.className = "cta-form-error";
+      form.appendChild(errEl);
+    }
+    errEl.textContent = text;
+  }
+
+  // Copy buttons for prompt code blocks
+  document.querySelectorAll(".codeblock").forEach((block) => {
+    const btn = block.querySelector(".copy-btn");
+    const src = block.querySelector(".src");
+    if (!btn || !src) return;
+    btn.addEventListener("click", async () => {
+      try {
+        await navigator.clipboard.writeText(src.textContent);
+        btn.classList.add("done");
+        btn.textContent = "Copied";
+        setTimeout(() => {
+          btn.classList.remove("done");
+          btn.textContent = "Copy";
+        }, 1400);
+      } catch (e) {
+        btn.textContent = "失败";
+        setTimeout(() => { btn.textContent = "Copy"; }, 1400);
+      }
+    });
+  });
+</script>
+
+</body>
+</html>

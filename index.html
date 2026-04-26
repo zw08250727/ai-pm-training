@@ -3231,24 +3231,56 @@ flowchart LR
       留下你的<span class="accent" style="color:var(--accent-2);font-weight:600;">部门和姓名</span>，方便培训后继续交流，也欢迎之后互相学习提效心得 🌱
     </p>
 
-    <form class="gate-form" id="gate-form" autocomplete="off">
-      <div class="gate-field">
-        <input type="text" id="gate-dept" name="department" placeholder=" " required maxlength="40">
-        <label for="gate-dept">所在部门 / 团队</label>
-      </div>
-      <div class="gate-field">
-        <input type="text" id="gate-name" name="name" placeholder=" " required maxlength="20">
-        <label for="gate-name">姓名 / 花名</label>
-      </div>
-      <button type="submit" class="gate-submit">
-        <span>开始查看培训资料</span>
-        <span class="arrow">→</span>
-      </button>
-    </form>
+    <iframe
+      src="https://docs.google.com/forms/d/e/1FAIpQLSdv7kF65VP_M7lf1mpkqGsItzpX9dsWY717VRuuhTwP6g2EQg/viewform?embedded=true"
+      width="100%"
+      height="400"
+      frameborder="0"
+      marginheight="0"
+      marginwidth="0"
+      style="border-radius: 12px; background: transparent;"
+      id="google-form-iframe"
+    >正在加载…</iframe>
 
-    <div class="gate-foot">
-      <span class="pin">●</span> 信息仅用于讲师后续交流，不会公开 · 本地浏览器记住，下次无需重填
+    <button type="button" class="gate-submit" id="form-submitted-btn" style="margin-top: 16px; display: none;" onclick="onFormSubmitted()">
+      <span>✅ 我已填写完毕，开始查看培训</span>
+      <span class="arrow">→</span>
+    </button>
+
+    <div class="gate-foot" style="margin-top: 12px;">
+      <span class="pin">●</span> 提交 Google 表单后，点击上方按钮解锁培训内容
     </div>
+
+    <style>
+      #form-submitted-btn {
+        animation: fadeInUp .4s ease-out;
+      }
+      @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+    </style>
+
+    <script>
+      let formSubmittedShown = false;
+      function onFormSubmitted() {
+        const profile = { department: 'Google Form', name: '学员', savedAt: new Date().toISOString() };
+        saveVisitor(profile);
+        showVisitorPill(profile);
+        unlockGate();
+      }
+      // 检测 iframe 加载完成后显示确认按钮
+      const iframe = document.getElementById('google-form-iframe');
+      if (iframe) {
+        iframe.addEventListener('load', function() {
+          if (!formSubmittedShown) {
+            formSubmittedShown = true;
+            const btn = document.getElementById('form-submitted-btn');
+            if (btn) btn.style.display = 'inline-flex';
+          }
+        });
+      }
+    </script>
   </div>
 </div>
 

@@ -3505,9 +3505,12 @@ flowchart LR
   }
 
   const existingVisitor = readVisitor();
+  // 兼容旧格式数据：如果字段缺失则清除重新填写
   if (existingVisitor && existingVisitor.department && existingVisitor.name) {
     showVisitorPill(existingVisitor);
   } else {
+    // 清除可能损坏的旧数据
+    if (existingVisitor) clearVisitor();
     lockGate();
   }
 

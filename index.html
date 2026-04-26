@@ -3384,12 +3384,15 @@ flowchart LR
     <script>
       // 拦截表单提交，使用 AJAX 发送给 formsubmit.co
       (function() {
-      const gateSubmitBtn = document.getElementById('gate-submit-btn');
-      const gateFormEl = document.getElementById('gate-form');
-      if (gateFormEl) {
+        const gateSubmitBtn = document.getElementById('gate-submit-btn');
+        const gateFormEl = document.getElementById('gate-form');
+        if (!gateFormEl || !gateSubmitBtn) return;
+
+        const originalSubmitHtml = gateSubmitBtn.innerHTML;
+
         gateFormEl.addEventListener('submit', async function(e) {
-        gateForm.addEventListener('submit', async function(e) {
           e.preventDefault();
+
           const dept = document.getElementById('gate-dept').value.trim();
           const name = document.getElementById('gate-name').value.trim();
           if (!dept || !name) return;
@@ -3402,30 +3405,26 @@ flowchart LR
           gateSubmitBtn.disabled = true;
           gateSubmitBtn.innerHTML = '<span>提交中…</span>';
 
+          const profile = { department: dept, name: name, savedAt: new Date().toISOString() };
+
           try {
             const ajaxUrl = 'https://formsubmit.co/ajax/zw08250727@gmail.com';
             const formData = new FormData(gateFormEl);
-            const response = await fetch(ajaxUrl, {
+            await fetch(ajaxUrl, {
               method: 'POST',
               body: formData,
               headers: { 'Accept': 'application/json' }
             });
-
-            // 无论成功与否，都解锁内容
-            const profile = { department: dept, name: name, savedAt: new Date().toISOString() };
-            saveVisitor(profile);
-            showVisitorPill(profile);
-            unlockGate();
-
           } catch (err) {
-            // 即使失败也解锁（本地已记录）
-            const profile = { department: dept, name: name, savedAt: new Date().toISOString() };
+            // 即使提交失败，也允许本地继续查看内容
+          } finally {
             saveVisitor(profile);
             showVisitorPill(profile);
+            gateSubmitBtn.disabled = false;
+            gateSubmitBtn.innerHTML = originalSubmitHtml;
             unlockGate();
           }
         });
-      }
       })();
     </script>
   </div>

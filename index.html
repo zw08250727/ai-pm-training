@@ -2656,90 +2656,45 @@ flowchart LR
       <div class="section-header">
         <span class="num">02</span>
         <h2>AI 产品工作流治理规范</h2>
-        <span class="lede">信息安全、事实核验、PRD 与原型治理、上线规范、产物评审 Rubric。</span>
+        <span class="lede">信息安全、事实核验、PRD 与原型治理、产物评审 Rubric（下图表化速览）。</span>
       </div>
 
       <h3>1. 信息安全边界</h3>
-      <p>禁止输入或上传：</p>
-      <ol>
-        <li>真实 API Key、数据库密码、token。</li>
-        <li>未脱敏客户个人信息。</li>
-        <li>未授权合同和商业敏感条款。</li>
-        <li>公司内部未公开财务数据。</li>
-        <li>生产环境 <code>.env.local</code>。</li>
-      </ol>
-      <p>允许在安全范围内使用：</p>
-      <ol>
-        <li>脱敏后的业务样例。</li>
-        <li>已公开的竞品资料。</li>
-        <li>内部可共享的 PRD 和原型。</li>
-        <li>经过授权的客户资料。</li>
-        <li>本地项目结构和非敏感代码。</li>
-      </ol>
+      <div class="viz-gov-grid">
+        <div class="viz-gov-block deny">
+          <h4>禁止输入或上传</h4>
+          <ol><li>真实 API Key、数据库密码、token</li><li>未脱敏客户个人信息</li><li>未授权合同与商业敏感条款</li><li>公司内部未公开财务数据</li><li>生产环境 <code>.env.local</code></li></ol>
+        </div>
+        <div class="viz-gov-block allow">
+          <h4>允许（安全范围内）</h4>
+          <ol><li>脱敏业务样例</li><li>已公开竞品资料</li><li>内部可共享 PRD/原型</li><li>经授权客户资料</li><li>本地项目结构与非敏感代码</li></ol>
+        </div>
+      </div>
 
       <h3>2. 事实核验规范</h3>
-      <p>必须核验的内容：</p>
-      <ol>
-        <li>法规、政策、合规结论。</li>
-        <li>价格、套餐、商业条款。</li>
-        <li>竞品最新功能。</li>
-        <li>市场规模和行业数据。</li>
-        <li>对外发布文案中的事实表述。</li>
-        <li>技术可行性和上线配置。</li>
-      </ol>
-      <p>来源记录最低要求：</p>
-      <ol>
-        <li>来源名称。</li>
-        <li>完整 URL 或本地文件路径。</li>
-        <li>查询时间。</li>
-        <li>数据所在章节或页面位置。</li>
-        <li>是否为 AI 推断。</li>
-      </ol>
+      <div class="viz-gov-grid">
+        <div class="viz-gov-block deny">
+          <h4>必须核验</h4>
+          <ol><li>法规、政策、合规结论</li><li>价格、套餐、商业条款</li><li>竞品最新功能</li><li>市场规模与行业数据</li><li>对外文案中的事实</li><li>技术可行性与上线配置</li></ol>
+        </div>
+        <div class="viz-gov-block allow">
+          <h4>来源记录最低要求</h4>
+          <ol><li>来源名称</li><li>完整 URL 或本地路径</li><li>查询时间</li><li>数据所在章节/页</li><li>是否为 AI 推断</li></ol>
+        </div>
+      </div>
 
-      <h3>3. PRD 和原型治理</h3>
-
-      <h4>3.1 PRD 产出检查</h4>
-      <p>PRD 必须包含：</p>
-      <ol>
-        <li>背景和目标。</li>
-        <li>目标用户和场景。</li>
-        <li>本期范围。</li>
-        <li>不做范围。</li>
-        <li>用户流程。</li>
-        <li>页面结构。</li>
-        <li>字段说明。</li>
-        <li>权限规则。</li>
-        <li>异常状态。</li>
-        <li>验收标准。</li>
-        <li>风险和待确认问题。</li>
-      </ol>
-
-      <h4>3.2 原型产出检查</h4>
-      <p>原型必须说明：</p>
-      <ol>
-        <li>适用端：PC、移动端或响应式。</li>
-        <li>核心入口。</li>
-        <li>页面跳转。</li>
-        <li>表单和提交动作。</li>
-        <li>列表和详情页。</li>
-        <li>数据是否为 mock。</li>
-        <li>哪些交互只是演示。</li>
-        <li>后续真实产品需要补什么。</li>
-      </ol>
+      <h3>3. PRD 与原型治理（要点）</h3>
+      <p><strong>PRD 必含</strong>：背景与目标 · 用户与场景 · 本期范围与不做范围 · 用户流程 · 页面结构 · 字段 · 权限 · 异常 · 验收 · 风险与待确认。</p>
+      <p><strong>原型必说明</strong>：适用端 · 核心入口 · 跳转 · 表单与提交 · 列表/详情 · mock 标注 · 演示边界 · 真实产品待补项。</p>
 
       <h3>4. AI 产物评审 Rubric</h3>
-      <div class="table-wrap">
-        <table>
-          <thead><tr><th>维度</th><th>检查问题</th></tr></thead>
-          <tbody>
-            <tr><td>完整性</td><td>是否覆盖任务要求和关键场景</td></tr>
-            <tr><td>准确性</td><td>是否有事实错误或未经验证结论</td></tr>
-            <tr><td>结构性</td><td>是否便于评审、执行和交接</td></tr>
-            <tr><td>可落地性</td><td>是否有字段、流程、验收和边界</td></tr>
-            <tr><td>风险控制</td><td>是否暴露不确定性和待确认项</td></tr>
-            <tr><td>可复用性</td><td>是否沉淀为模板或工作流</td></tr>
-          </tbody>
-        </table>
+      <div class="viz-rubric">
+        <span><strong>完整性</strong>是否覆盖任务与关键场景</span>
+        <span><strong>准确性</strong>事实与结论是否可验证</span>
+        <span><strong>结构性</strong>是否便于评审与交接</span>
+        <span><strong>可落地性</strong>字段、流程、验收、边界</span>
+        <span><strong>风险控制</strong>不确定性与待确认项</span>
+        <span><strong>可复用性</strong>能否沉淀为模板或工作流</span>
       </div>
     </section>
 

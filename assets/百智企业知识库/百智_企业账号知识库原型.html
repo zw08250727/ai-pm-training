@@ -1,0 +1,2277 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>百智企业知识库</title>
+  <style>
+    :root {
+      --bg: #f7f8fb;
+      --panel: #ffffff;
+      --line: #e8ebf2;
+      --line-2: #dfe5ef;
+      --text: #1f2430;
+      --sub: #7a8395;
+      --muted: #a7afbd;
+      --blue: #3d6cff;
+      --blue-soft: #eef3ff;
+      --green: #2bb673;
+      --green-soft: #edf9f3;
+      --orange: #ff9800;
+      --orange-soft: #fff4e5;
+      --shadow: 0 10px 24px rgba(31, 36, 48, 0.05);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-width: 1440px;
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+        "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    }
+
+    button,
+    input,
+    select {
+      font: inherit;
+    }
+
+    .app {
+      display: grid;
+      grid-template-columns: 150px 1fr;
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      background: #fff;
+      border-right: 1px solid var(--line-2);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .logo {
+      height: 62px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0 18px;
+      border-bottom: 1px solid #f3f5f9;
+      font-weight: 700;
+      font-size: 18px;
+    }
+
+    .logo-mark {
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, #2b61ff, #6b8fff);
+      color: #fff;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    .new-task {
+      margin: 14px 12px 10px;
+      height: 38px;
+      border: 0;
+      border-radius: 10px;
+      background: #f3f6ff;
+      color: var(--blue);
+      font-weight: 600;
+      text-align: left;
+      padding: 0 14px;
+      cursor: pointer;
+    }
+
+    .nav {
+      padding: 4px 10px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      height: 36px;
+      padding: 0 10px;
+      border-radius: 9px;
+      color: #5e6676;
+      cursor: pointer;
+      font-size: 13px;
+    }
+
+    .nav-item.active {
+      background: var(--blue-soft);
+      color: var(--blue);
+      font-weight: 700;
+    }
+
+    .nav-dot {
+      width: 14px;
+      text-align: center;
+      font-size: 12px;
+    }
+
+    .side-group {
+      padding: 10px 14px 0;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .task-list {
+      padding: 6px 10px 0;
+      display: grid;
+      gap: 4px;
+    }
+
+    .task-item {
+      padding: 7px 10px;
+      border-radius: 8px;
+      color: #8c94a3;
+      font-size: 12px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      cursor: pointer;
+    }
+
+    .task-item:hover {
+      background: #f7f9fc;
+      color: #5e6676;
+    }
+
+    .sidebar-user {
+      margin-top: auto;
+      padding: 12px;
+      border-top: 1px dashed #dfe5ef;
+      color: #6d7585;
+      font-size: 12px;
+      line-height: 1.7;
+    }
+
+    .main {
+      padding: 18px 20px 22px;
+    }
+
+    .page {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .header {
+      padding: 18px 20px 14px;
+      border-bottom: 1px solid #f4f6fa;
+    }
+
+    .header-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: flex-start;
+    }
+
+    .title h1 {
+      margin: 0;
+      font-size: 24px;
+      font-weight: 700;
+    }
+
+    .title-line {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .title-meta {
+      color: var(--sub);
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .title p {
+      margin: 6px 0 0;
+      color: var(--sub);
+      font-size: 12px;
+      line-height: 1.7;
+    }
+
+    .header-tools {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .header-role {
+      display: inline-flex;
+      align-items: center;
+      height: 32px;
+      padding: 0 12px;
+      border-radius: 999px;
+      background: #f7f9fd;
+      border: 1px solid #e5ebf5;
+      color: #5f6b7d;
+      font-size: 12px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .persona-switch,
+    .space-switch {
+      display: inline-flex;
+      padding: 4px;
+      border-radius: 999px;
+      background: #f3f5fa;
+      gap: 4px;
+    }
+
+    .persona-switch button,
+    .space-switch button {
+      height: 32px;
+      border: 0;
+      border-radius: 999px;
+      padding: 0 14px;
+      background: transparent;
+      color: #657084;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .persona-switch button.active,
+    .space-switch button.active {
+      background: #fff;
+      color: var(--blue);
+      box-shadow: 0 2px 8px rgba(31, 36, 48, 0.08);
+    }
+
+    .search {
+      width: 200px;
+      height: 32px;
+      border: 1px solid var(--line-2);
+      border-radius: 10px;
+      padding: 0 12px;
+      outline: none;
+      font-size: 12px;
+    }
+
+    .context-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+      padding: 10px 14px;
+      border-radius: 12px;
+      background: #fafbfd;
+      border: 1px solid #eef2f7;
+    }
+
+    .context-meta {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      height: 24px;
+      padding: 0 9px;
+      border-radius: 999px;
+      background: #fff;
+      border: 1px solid #e6ebf3;
+      color: #5f6b7d;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .ghost-btn,
+    .main-btn {
+      height: 32px;
+      border-radius: 10px;
+      padding: 0 12px;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .ghost-btn {
+      border: 1px solid #d7e4ff;
+      background: #fff;
+      color: var(--blue);
+    }
+
+    .main-btn {
+      border: 0;
+      background: var(--blue);
+      color: #fff;
+    }
+
+    .content {
+      padding: 16px 20px 20px;
+    }
+
+    .section-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin: 4px 0 10px;
+    }
+
+    .section-title-wrap {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .section-title {
+      margin: 0;
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .section-sub {
+      color: var(--sub);
+      font-size: 12px;
+    }
+
+    .info-btn {
+      width: 20px;
+      height: 20px;
+      border: 1px solid #d9e2f2;
+      border-radius: 50%;
+      background: #fff;
+      color: #7a8395;
+      font-size: 11px;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      padding: 0;
+    }
+
+    .info-pop {
+      position: absolute;
+      top: calc(100% + 8px);
+      left: 0;
+      width: 320px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      border: 1px solid #e7ecf5;
+      background: #fff;
+      box-shadow: 0 18px 40px rgba(31, 36, 48, 0.1);
+      color: #627086;
+      font-size: 12px;
+      line-height: 1.7;
+      z-index: 10;
+    }
+
+    .info-pop strong {
+      color: var(--text);
+    }
+
+    .module-row {
+      display: grid;
+      grid-template-columns: 1.16fr 1fr 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .module-card {
+      min-height: 88px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: #fff;
+      padding: 14px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      cursor: pointer;
+      transition: 0.18s ease;
+    }
+
+    .module-card:hover {
+      border-color: #d7e4ff;
+      box-shadow: var(--shadow);
+    }
+
+    .module-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .module-icon {
+      width: 22px;
+      height: 22px;
+      border-radius: 7px;
+      background: #f2f5ff;
+      color: var(--blue);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .module-card p {
+      margin: 0;
+      color: var(--sub);
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    .module-tag {
+      display: inline-flex;
+      align-items: center;
+      width: fit-content;
+      height: 22px;
+      padding: 0 8px;
+      border-radius: 999px;
+      background: #f5f8ff;
+      color: var(--blue);
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .filter-stack {
+      display: grid;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .filter-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .filter-main {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .filter-label,
+    .subfilter-label {
+      color: #7a8395;
+      font-size: 12px;
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 18px;
+      align-items: center;
+      border-bottom: 1px solid #f0f2f7;
+      flex: 1;
+    }
+
+    .tab {
+      position: relative;
+      padding: 10px 0;
+      color: var(--sub);
+      font-size: 12px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .tab.active {
+      color: var(--blue);
+      font-weight: 700;
+    }
+
+    .tab.active::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: -1px;
+      height: 2px;
+      background: var(--blue);
+      border-radius: 999px;
+    }
+
+    .subfilter-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .flow-filters {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .flow-chip {
+      height: 30px;
+      padding: 0 12px;
+      border-radius: 999px;
+      border: 1px solid #e2e8f2;
+      background: #fff;
+      color: #607089;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .flow-chip.active {
+      border-color: #d7e4ff;
+      background: #eef3ff;
+      color: var(--blue);
+    }
+
+    .filter-meta {
+      color: var(--muted);
+      font-size: 11px;
+      white-space: nowrap;
+    }
+
+    .table-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .top-btn {
+      height: 32px;
+      border-radius: 10px;
+      padding: 0 12px;
+      border: 1px solid var(--line-2);
+      background: #fff;
+      color: #4f5b70;
+      cursor: pointer;
+      font-size: 12px;
+    }
+
+    .top-btn.primary {
+      border-color: #d7e4ff;
+      background: #f2f6ff;
+      color: var(--blue);
+    }
+
+    .table-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 8px;
+      color: var(--sub);
+      font-size: 12px;
+    }
+
+    .folder-board {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .folder-card {
+      position: relative;
+      min-height: 118px;
+      border-radius: 16px;
+      border: 1px solid #e7ecf5;
+      background: linear-gradient(180deg, #ffffff 0%, #f9fbff 100%);
+      padding: 16px;
+      cursor: pointer;
+      transition: 0.18s ease;
+      overflow: hidden;
+    }
+
+    .folder-card:hover {
+      border-color: #d7e4ff;
+      box-shadow: var(--shadow);
+      transform: translateY(-1px);
+    }
+
+    .folder-card.active {
+      border-color: #cfe0ff;
+      background: linear-gradient(180deg, #f8fbff 0%, #eef4ff 100%);
+      box-shadow: 0 12px 24px rgba(61, 108, 255, 0.08);
+    }
+
+    .folder-card::after {
+      content: "";
+      position: absolute;
+      right: -10px;
+      bottom: -14px;
+      width: 74px;
+      height: 74px;
+      border-radius: 24px;
+      background: rgba(61, 108, 255, 0.06);
+    }
+
+    .folder-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .folder-top-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .folder-manage-btn {
+      height: 26px;
+      padding: 0 10px;
+      border: 1px solid #d7e4ff;
+      border-radius: 999px;
+      background: #f3f7ff;
+      color: var(--blue);
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      position: relative;
+      z-index: 2;
+      white-space: nowrap;
+    }
+
+    .folder-manage-btn:hover {
+      background: #eaf1ff;
+    }
+
+    .folder-mark {
+      width: 34px;
+      height: 34px;
+      border-radius: 12px;
+      background: #eef3ff;
+      color: var(--blue);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+
+    .folder-count {
+      height: 24px;
+      padding: 0 8px;
+      border-radius: 999px;
+      background: #fff;
+      border: 1px solid #e1e7f0;
+      color: #5d677a;
+      font-size: 11px;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      flex-shrink: 0;
+    }
+
+    .folder-title {
+      margin: 0;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .folder-desc {
+      margin: 8px 0 12px;
+      color: var(--sub);
+      font-size: 12px;
+      line-height: 1.6;
+      min-height: 38px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .folder-meta {
+      display: inline-flex;
+      align-items: center;
+      height: 24px;
+      padding: 0 9px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.92);
+      border: 1px solid #e4ebf7;
+      color: #5f6c82;
+      font-size: 11px;
+      font-weight: 600;
+      position: relative;
+      z-index: 1;
+    }
+
+    .folder-owner {
+      margin-top: 8px;
+      color: #667287;
+      font-size: 11px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .folder-card.create {
+      border-style: dashed;
+      background: linear-gradient(180deg, #ffffff 0%, #f6f9ff 100%);
+    }
+
+    .folder-card.create .folder-mark {
+      background: #edf3ff;
+      font-size: 20px;
+      font-weight: 700;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th,
+    td {
+      padding: 13px 8px;
+      border-bottom: 1px solid #f2f4f8;
+      text-align: left;
+      font-size: 12px;
+      vertical-align: middle;
+    }
+
+    th {
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    tr:hover {
+      background: #fbfcff;
+    }
+
+    .checkbox-col {
+      width: 34px;
+      text-align: center;
+    }
+
+    .file-name {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .file-icon {
+      width: 18px;
+      text-align: center;
+      font-size: 14px;
+    }
+
+    .file-main strong {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 4px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .file-note {
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      height: 22px;
+      padding: 0 8px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 600;
+      background: #f5f7fb;
+      color: #6d7585;
+    }
+
+    .pill.green {
+      background: var(--green-soft);
+      color: var(--green);
+    }
+
+    .pill.blue {
+      background: var(--blue-soft);
+      color: var(--blue);
+    }
+
+    .pill.orange {
+      background: var(--orange-soft);
+      color: var(--orange);
+    }
+
+    .row-actions {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .action-btn {
+      height: 28px;
+      border-radius: 999px;
+      border: 0;
+      background: #f5f7fb;
+      color: #5f6b7d;
+      padding: 0 10px;
+      font-size: 11px;
+      cursor: pointer;
+    }
+
+    .action-btn.primary {
+      background: #edf3ff;
+      color: var(--blue);
+    }
+
+    .action-btn.ai {
+      background: linear-gradient(135deg, #4d7cff, #7a5cff);
+      color: #fff;
+    }
+
+    .action-btn.ppt {
+      background: linear-gradient(135deg, #ff8a1f, #ff5a1f);
+      color: #fff;
+    }
+
+    .action-btn.danger {
+      background: #fff4f1;
+      color: #e25a2c;
+      border: 1px solid #ffd9cc;
+    }
+
+    .action-btn.danger:hover {
+      background: #ffece6;
+      color: #cc4d22;
+    }
+
+    .icon-btn {
+      width: 28px;
+      height: 28px;
+      border: 0;
+      border-radius: 50%;
+      background: transparent;
+      color: #8b96a8;
+      cursor: pointer;
+      font-size: 15px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .icon-btn:hover {
+      background: #f3f6fb;
+      color: #586579;
+    }
+
+    .permission-grid {
+      display: grid;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .permission-row {
+      display: grid;
+      grid-template-columns: 1.3fr 1fr;
+      gap: 12px;
+      align-items: center;
+      padding: 10px 12px;
+      border-radius: 12px;
+      background: #f8faff;
+      border: 1px solid #edf1f7;
+    }
+
+    .permission-row strong {
+      display: block;
+      font-size: 12px;
+      color: var(--text);
+    }
+
+    .permission-row span {
+      display: block;
+      margin-top: 4px;
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .danger-zone {
+      margin-top: 18px;
+      padding-top: 16px;
+      border-top: 1px dashed #e6ebf3;
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .danger-copy {
+      color: #67758a;
+      font-size: 12px;
+      line-height: 1.7;
+    }
+
+    .top-btn.danger {
+      border-color: #ffd9cc;
+      background: #fff5f1;
+      color: #ff6a3d;
+    }
+
+    .top-btn.danger:hover {
+      background: #ffede7;
+      color: #e45a2b;
+    }
+
+    .trash-list {
+      display: grid;
+      gap: 10px;
+      margin-top: 16px;
+      max-height: 420px;
+      overflow: auto;
+    }
+
+    .trash-item {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 14px;
+      align-items: center;
+      padding: 14px 16px;
+      border-radius: 14px;
+      background: #fafbfd;
+      border: 1px solid #edf1f7;
+    }
+
+    .trash-item strong {
+      display: block;
+      font-size: 13px;
+      color: var(--text);
+    }
+
+    .trash-meta {
+      margin-top: 4px;
+      color: #7a8395;
+      font-size: 12px;
+      line-height: 1.7;
+    }
+
+    .trash-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .empty-state {
+      padding: 30px 12px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .modal-mask {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.32);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 20;
+    }
+
+    .modal-panel {
+      width: 620px;
+      background: #fff;
+      border-radius: 18px;
+      box-shadow: 0 24px 60px rgba(15, 23, 42, 0.18);
+      overflow: hidden;
+    }
+
+    .modal-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 20px 22px 14px;
+      border-bottom: 1px solid #eef2f8;
+    }
+
+    .modal-head h3 {
+      margin: 0;
+      font-size: 20px;
+    }
+
+    .modal-head p {
+      margin: 6px 0 0;
+      color: var(--sub);
+      font-size: 12px;
+      line-height: 1.7;
+    }
+
+    .modal-close {
+      width: 32px;
+      height: 32px;
+      border: 0;
+      border-radius: 50%;
+      background: #f4f6fb;
+      color: #6a7486;
+      cursor: pointer;
+    }
+
+    .modal-body {
+      padding: 18px 22px 22px;
+    }
+
+    .transfer-summary {
+      padding: 14px 16px;
+      border-radius: 14px;
+      background: #f7f9fd;
+      border: 1px solid #edf1f7;
+    }
+
+    .transfer-summary strong {
+      display: block;
+      font-size: 14px;
+      margin-bottom: 6px;
+    }
+
+    .transfer-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .transfer-tag {
+      max-width: 100%;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: #fff;
+      border: 1px solid #e2e8f3;
+      color: #546075;
+      font-size: 12px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-top: 16px;
+    }
+
+    .field {
+      display: grid;
+      gap: 8px;
+    }
+
+    .field.full {
+      grid-column: 1 / -1;
+    }
+
+    .field label {
+      font-size: 12px;
+      color: #5d6779;
+      font-weight: 600;
+    }
+
+    .field select,
+    .field textarea {
+      width: 100%;
+      border: 1px solid #dfe5ef;
+      border-radius: 12px;
+      background: #fff;
+      color: var(--text);
+      padding: 10px 12px;
+      outline: none;
+    }
+
+    .field textarea {
+      min-height: 88px;
+      resize: none;
+      line-height: 1.6;
+    }
+
+    .field-hint {
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .modal-foot {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      padding-top: 18px;
+    }
+
+    .toast {
+      position: fixed;
+      top: 24px;
+      right: 26px;
+      min-width: 280px;
+      max-width: 420px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      background: rgba(31, 36, 48, 0.94);
+      color: #fff;
+      box-shadow: 0 20px 40px rgba(15, 23, 42, 0.18);
+      z-index: 30;
+      font-size: 12px;
+      line-height: 1.7;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .floating {
+      position: fixed;
+      right: 22px;
+      bottom: 18px;
+      height: 40px;
+      border-radius: 999px;
+      padding: 0 14px;
+      border: 1px solid #dbe5ff;
+      background: #fff;
+      color: #5a6480;
+      box-shadow: var(--shadow);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="logo">
+        <span class="logo-mark">百</span>
+        <span>百智</span>
+      </div>
+
+      <button class="new-task">+ 新任务</button>
+
+      <div class="nav">
+        <div class="nav-item"><span class="nav-dot">⌂</span>首页</div>
+        <div class="nav-item active"><span class="nav-dot">◆</span>知识库</div>
+        <div class="nav-item"><span class="nav-dot">›</span>任务</div>
+      </div>
+
+      <div class="side-group">企业空间</div>
+      <div class="task-list">
+        <div class="task-item">销售中心资料沉淀</div>
+        <div class="task-item">品牌内容治理</div>
+        <div class="task-item">项目组方案资料</div>
+      </div>
+
+      <div class="side-group">最近</div>
+      <div class="task-list">
+        <div class="task-item">华北一部客户方案</div>
+        <div class="task-item">企业宣传资料库</div>
+      </div>
+
+      <div class="sidebar-user">
+        李晓雯 / 百智科技<br />
+        销售中心 / 华北一部<br />
+        企业知识空间
+      </div>
+    </aside>
+
+    <main class="main">
+      <div class="page">
+        <div class="header">
+          <div class="header-top">
+            <div class="title">
+              <div class="title-line">
+                <h1 id="pageTitle">企业知识库</h1>
+                <span class="title-meta" id="titleMeta">百智科技 / 销售中心 / 华北一部</span>
+              </div>
+              <p id="pageDesc">统一管理组织内知识资产、共享资料与文件归属。</p>
+            </div>
+
+            <div class="header-tools">
+              <div class="header-role" id="roleChip">当前身份：企业成员</div>
+              <div class="persona-switch" id="personaSwitch">
+                <button class="active" data-role="member">企业成员</button>
+                <button data-role="admin">企业管理员</button>
+              </div>
+              <input class="search" id="searchInput" placeholder="搜索企业文件" />
+              <button class="ghost-btn" id="trashBtn">回收站</button>
+            </div>
+          </div>
+
+          <div class="space-switch" id="spaceSwitch">
+            <button data-view="personal">个人工作区</button>
+            <button class="active" data-view="enterprise">企业知识库</button>
+          </div>
+
+          <div class="context-bar">
+            <div class="context-meta">
+              <span class="chip">支持按文件夹、部门与来源快速筛选</span>
+            </div>
+            <div>
+              <button class="ghost-btn" id="ruleBtn">归属管理</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="content">
+          <div class="section-head hidden" id="folderSectionHead">
+            <div class="section-title-wrap">
+              <h3 class="section-title">文件夹区</h3>
+              <button class="info-btn" id="folderInfoBtn">i</button>
+              <div class="info-pop hidden" id="folderInfoPop"><strong>说明</strong><br />一期仅支持一级文件夹，由企业管理员自定义创建；成员可见范围由企业管理平台授权控制，本页面仅承接权限生效；一级管理员可按部门统览下属资料。</div>
+            </div>
+            <button class="ghost-btn hidden" id="folderCreateBtn">新建文件夹</button>
+          </div>
+          <div class="folder-board hidden" id="folderBoard"></div>
+          <div class="section-head" id="entrySectionHead">
+            <div class="section-title-wrap">
+              <h3 class="section-title">文件上传方式</h3>
+            </div>
+            <span class="section-sub">支持从多种方式沉淀内容到当前空间</span>
+          </div>
+          <div class="module-row" id="moduleRow"></div>
+
+          <div class="filter-stack">
+            <div class="filter-row">
+              <div class="filter-main" id="primaryFilterPanel">
+                <span class="filter-label" id="primaryFilterLabel">文件类型</span>
+                <div class="tabs" id="typeTabs">
+                  <div class="tab active" data-type="全部">全部</div>
+                  <div class="tab" data-type="报告文件">报告文件</div>
+                  <div class="tab" data-type="自行上传">自行上传</div>
+                  <div class="tab" data-type="录音文件">录音文件</div>
+                  <div class="tab" data-type="PPT文件">PPT文件</div>
+                </div>
+                <span class="filter-meta hidden" id="primaryFilterMeta">管理员可按业务场景自定义文件夹</span>
+              </div>
+
+              <div class="table-actions">
+                <button class="top-btn" id="copyBtn">复制到企业</button>
+                <button class="top-btn primary" id="moveBtn">迁移到企业</button>
+              </div>
+            </div>
+
+            <div class="subfilter-row hidden" id="departmentFilterRow">
+              <span class="subfilter-label">所属部门</span>
+              <div class="flow-filters" id="departmentFilters"></div>
+            </div>
+
+            <div class="subfilter-row" id="flowFilterRow">
+              <span class="subfilter-label">来源/流转</span>
+              <div class="flow-filters" id="flowFilters">
+                <button class="flow-chip active" data-flow="全部">全部</button>
+                <button class="flow-chip" data-flow="企业直传">企业直传</button>
+                <button class="flow-chip" data-flow="个人复制">个人复制</button>
+                <button class="flow-chip" data-flow="个人迁移">个人迁移</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="table-top">
+            <div id="tableCount">共 5 个文件</div>
+            <div id="tableModeHint">当前查看：企业知识库</div>
+          </div>
+
+          <table>
+            <thead>
+              <tr>
+                <th class="checkbox-col"><input type="checkbox" id="selectAll" /></th>
+                <th>文件名</th>
+                <th>文件大小</th>
+                <th id="typeHeader">内容分类</th>
+                <th id="flowHeader">来源/流转</th>
+                <th class="hidden" id="deptHeader">所属部门</th>
+                <th>摘要状态</th>
+                <th>文件状态</th>
+                <th id="extraHeader">归属范围</th>
+                <th>更新时间</th>
+                <th style="text-align: right;">操作</th>
+              </tr>
+            </thead>
+            <tbody id="tableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <div class="floating">百智AI企业助手</div>
+
+  <div class="modal-mask hidden" id="transferModal">
+    <div class="modal-panel">
+      <div class="modal-head">
+        <div>
+          <h3 id="transferTitle">复制到企业知识库</h3>
+          <p id="transferDesc">将个人工作区文件沉淀到企业知识库，并设置企业内可见范围。</p>
+        </div>
+        <button class="modal-close" id="transferClose">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="transfer-summary">
+          <strong id="transferSummaryTitle">已选择 1 个文件</strong>
+          <div class="field-hint" id="transferSummaryHint">复制后将保留个人工作区原文件。</div>
+          <div class="transfer-list" id="transferList"></div>
+        </div>
+
+        <div class="form-grid">
+          <div class="field">
+            <label for="targetFolder">目标文件夹</label>
+            <select id="targetFolder">
+              <option value="销售中心资料沉淀">销售中心资料沉淀</option>
+              <option value="品牌内容治理">品牌内容治理</option>
+              <option value="项目组方案资料">项目组方案资料</option>
+              <option value="制度模板中心">制度模板中心</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="targetDepartment">所属部门</label>
+            <select id="targetDepartment"></select>
+          </div>
+          <div class="field">
+            <label for="targetScope">归属范围</label>
+            <select id="targetScope">
+              <option value="销售中心 / 华北一部">销售中心 / 华北一部</option>
+              <option value="销售中心">销售中心</option>
+              <option value="品牌部">品牌部</option>
+              <option value="全企业">全企业</option>
+            </select>
+          </div>
+          <div class="field full">
+            <label for="targetReason">沉淀说明</label>
+            <textarea id="targetReason" placeholder="补充这批资料沉淀到企业知识库的用途、适用团队或共享背景"></textarea>
+            <div class="field-hint" id="transferReasonHint">迁移后，文件将从个人工作区移除，仅保留企业侧记录。</div>
+          </div>
+        </div>
+
+        <div class="modal-foot">
+          <button class="top-btn" id="transferCancel">取消</button>
+          <button class="top-btn primary" id="transferSubmit">确认复制</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-mask hidden" id="folderModal">
+    <div class="modal-panel" style="width: 520px;">
+      <div class="modal-head">
+        <div>
+          <h3>新建文件夹</h3>
+          <p>企业知识库按管理员维护的文件夹结构组织内容，文件格式只作为辅助信息展示。</p>
+        </div>
+        <button class="modal-close" id="folderClose">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-grid" style="grid-template-columns: 1fr;">
+          <div class="field">
+            <label for="folderName">文件夹名称</label>
+            <textarea id="folderName" placeholder="例如：重点客户案例库" style="min-height: 52px;"></textarea>
+            <div class="field-hint">一期仅支持一级文件夹，不支持继续创建二级目录。</div>
+          </div>
+          <div class="field">
+            <label for="folderDept">适用部门</label>
+            <select id="folderDept"></select>
+            <div class="field-hint">新建后将以文件夹卡片形式展示，并可作为上传、复制、迁移的目标位置。</div>
+          </div>
+        </div>
+        <div class="modal-foot">
+          <button class="top-btn" id="folderCancel">取消</button>
+          <button class="top-btn primary" id="folderSubmit">创建文件夹</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-mask hidden" id="folderSettingModal">
+    <div class="modal-panel" style="width: 680px;">
+      <div class="modal-head">
+        <div>
+          <h3>文件夹设置</h3>
+          <p>从企业组织架构同步部门，并按部门设定查看/下载、编辑、可管理权限。</p>
+        </div>
+        <button class="modal-close" id="folderSettingClose">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-grid">
+          <div class="field full">
+            <label for="folderSettingName">文件夹名称</label>
+            <textarea id="folderSettingName" style="min-height: 52px;"></textarea>
+            <div class="field-hint">重命名后，同文件夹下已有文件将同步更新所属文件夹名称。</div>
+          </div>
+        </div>
+        <div class="permission-grid" id="folderPermissionGrid"></div>
+        <div class="danger-zone">
+          <div class="danger-copy">删除文件夹会将该文件夹及其中所有文件移入企业回收站，可在回收站中还原或彻底删除。</div>
+          <button class="top-btn danger" id="folderDeleteBtn">删除并移入回收站</button>
+        </div>
+        <div class="modal-foot">
+          <button class="top-btn" id="folderSettingCancel">取消</button>
+          <button class="top-btn primary" id="folderSettingSubmit">保存设置</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-mask hidden" id="trashModal">
+    <div class="modal-panel" style="width: 700px;">
+      <div class="modal-head">
+        <div>
+          <h3 id="trashTitle">回收站</h3>
+          <p id="trashDesc">支持还原到原位置，或彻底删除不可恢复。</p>
+        </div>
+        <button class="modal-close" id="trashClose">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="trash-list" id="trashList"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast hidden" id="toast"></div>
+
+  <script>
+    const state = {
+      role: "member",
+      view: "enterprise",
+      selectedIds: [],
+      keyword: "",
+      typeFilter: "全部",
+      folderFilter: "全部",
+      departmentFilter: "全部",
+      flowFilter: "全部",
+      currentUser: "李晓雯",
+      transferMode: "copy",
+      transferIds: [],
+      activeFolderName: "",
+      personalTrash: [],
+      enterpriseTrash: [],
+      authorizedDepartments: ["销售中心 / 华北一部"],
+      enterpriseDepartments: ["全部", "销售中心 / 华北一部", "销售中心 / 华东二部", "品牌部", "战略市场部"],
+      enterpriseFolders: [
+        { name: "全部", desc: "查看当前权限范围内全部文件", dept: "全部部门", owner: "系统目录", icon: "▦", permissions: {} },
+        { name: "销售中心资料沉淀", desc: "统一收敛销售方案、拜访纪要与周报资料", dept: "销售中心 / 华北一部", owner: "李晓雯", icon: "🗂", permissions: { "销售中心 / 华北一部": "可管理", "销售中心 / 华东二部": "查看/下载", "品牌部": "查看/下载", "战略市场部": "编辑" } },
+        { name: "品牌内容治理", desc: "管理品牌发布素材、宣讲资料与标准口径", dept: "品牌部", owner: "赵雅婷", icon: "📁", permissions: { "品牌部": "可管理", "销售中心 / 华北一部": "查看/下载", "销售中心 / 华东二部": "查看/下载", "战略市场部": "编辑" } },
+        { name: "项目组方案资料", desc: "沉淀项目方案、案例复盘与客户沟通材料", dept: "销售中心 / 华东二部", owner: "王凯", icon: "🗃", permissions: { "销售中心 / 华东二部": "可管理", "销售中心 / 华北一部": "编辑", "品牌部": "查看/下载", "战略市场部": "查看/下载" } },
+        { name: "制度模板中心", desc: "集中维护制度、模板与培训规范资料", dept: "战略市场部", owner: "周敏", icon: "🗄", permissions: { "战略市场部": "可管理", "品牌部": "编辑", "销售中心 / 华北一部": "查看/下载", "销售中心 / 华东二部": "查看/下载" } }
+      ],
+      personalDocs: [
+        { id: "p1", icon: "📕", name: "市场分析报告.pdf", size: "2.3 MB", type: "报告文件", flow: "个人沉淀", summary: "已入库", status: "已入库", extra: "-", updatedAt: "2024-01-15 14:30", owner: "李晓雯", note: "可沉淀到企业知识库。" },
+        { id: "p2", icon: "📘", name: "技术方案.md", size: "2.3 MB", type: "自行上传", flow: "个人沉淀", summary: "已入库", status: "已入库", extra: "-", updatedAt: "2024-01-15 14:30", owner: "李晓雯", note: "本人可复制或迁移到企业。" },
+        { id: "p3", icon: "📙", name: "产品发布会演讲.pptx", size: "2.3 MB", type: "PPT文件", flow: "个人沉淀", summary: "已入库", status: "已入库", extra: "-", updatedAt: "2024-01-15 14:30", owner: "李晓雯", note: "可迁移到企业品牌空间。" }
+      ],
+      enterpriseDocs: [
+        { id: "e1", icon: "📕", name: "企业市场分析报告.pdf", size: "2.3 MB", type: "PDF", folder: "销售中心资料沉淀", department: "销售中心 / 华北一部", flow: "企业直传", summary: "已入库", status: "已发布", extra: "全企业", updatedAt: "2024-01-15 14:30", owner: "李晓雯", note: "企业级报告资料，面向全组织共享。" },
+        { id: "e2", icon: "📘", name: "华北一部周报总结.docx", size: "2.3 MB", type: "Word", folder: "销售中心资料沉淀", department: "销售中心 / 华北一部", flow: "个人复制", summary: "已入库", status: "已发布", extra: "销售中心 / 华北一部", updatedAt: "2024-01-15 14:30", owner: "李晓雯", note: "部门周报内容已按销售主题归档。" },
+        { id: "e3", icon: "📗", name: "商务数据表.xlsx", size: "2.3 MB", type: "Excel", folder: "项目组方案资料", department: "销售中心 / 华东二部", flow: "企业直传", summary: "已入库", status: "已发布", extra: "销售中心 / 华东二部", updatedAt: "2024-01-15 14:30", owner: "王凯", note: "业务数据资料按项目方案沉淀。" },
+        { id: "e4", icon: "🎙", name: "客户拜访录音_苏州工厂.m4a", size: "18.6 MB", type: "音频", folder: "项目组方案资料", department: "销售中心 / 华东二部", flow: "企业直传", summary: "已入库", status: "已发布", extra: "销售中心 / 华东二部", updatedAt: "2024-01-15 14:30", owner: "王凯", note: "访谈录音已归档到客户案例资料夹。" },
+        { id: "e5", icon: "🎙", name: "渠道沟通纪要_20240115.wav", size: "9.8 MB", type: "音频", folder: "制度模板中心", department: "战略市场部", flow: "个人迁移", summary: "已入库", status: "已发布", extra: "战略市场部", updatedAt: "2024-01-15 14:30", owner: "周敏", note: "沟通纪要已转为培训复盘资料。" },
+        { id: "e6", icon: "📙", name: "品牌发布会演讲.pptx", size: "12.4 MB", type: "PPT", folder: "品牌内容治理", department: "品牌部", flow: "企业直传", summary: "已入库", status: "已发布", extra: "品牌部", updatedAt: "2024-01-15 14:30", owner: "赵雅婷", note: "品牌资料与演示内容统一纳入品牌文件夹。" }
+      ]
+    };
+
+    function getDocs() {
+      const docs = state.view === "enterprise" ? state.enterpriseDocs : state.personalDocs;
+      return docs.filter((doc) => {
+        const permissionMatch = state.view !== "enterprise"
+          ? true
+          : state.role === "admin"
+            ? true
+            : state.authorizedDepartments.includes(doc.department);
+        const typeMatch = state.view === "enterprise"
+          ? state.folderFilter === "全部" || doc.folder === state.folderFilter
+          : state.typeFilter === "全部" || doc.type === state.typeFilter;
+        const departmentMatch = state.view !== "enterprise"
+          ? true
+          : state.departmentFilter === "全部" || doc.department === state.departmentFilter;
+        const flowMatch = state.view !== "enterprise"
+          ? true
+          : state.flowFilter === "全部"
+            ? true
+            : doc.flow === state.flowFilter;
+        const keywordMatch = !state.keyword || [
+          doc.name,
+          doc.type,
+          doc.flow,
+          doc.status,
+          doc.extra,
+          doc.owner,
+          doc.department || "",
+          doc.folder || ""
+        ].join(" ").toLowerCase().includes(state.keyword.toLowerCase());
+        return permissionMatch && typeMatch && departmentMatch && flowMatch && keywordMatch;
+      });
+    }
+
+    function getVisibleFolderConfigs() {
+      if (state.role === "admin") return state.enterpriseFolders;
+      return state.enterpriseFolders.filter((folder) => folder.name === "全部" || folder.dept === "全部部门" || state.authorizedDepartments.includes(folder.dept));
+    }
+
+    function getFolderConfigByName(name) {
+      return state.enterpriseFolders.find((folder) => folder.name === name);
+    }
+
+    function getTrashItems() {
+      return state.view === "personal" ? state.personalTrash : state.enterpriseTrash;
+    }
+
+    function trashFile(doc) {
+      const deletedAt = formatNow();
+      if (state.view === "personal") {
+        state.personalDocs = state.personalDocs.filter((item) => item.id !== doc.id);
+        state.personalTrash = [{ kind: "file", item: doc, deletedAt }, ...state.personalTrash];
+      } else {
+        state.enterpriseDocs = state.enterpriseDocs.filter((item) => item.id !== doc.id);
+        state.enterpriseTrash = [{ kind: "file", item: doc, deletedAt }, ...state.enterpriseTrash];
+      }
+      state.selectedIds = state.selectedIds.filter((id) => id !== doc.id);
+      renderTable();
+      renderFolderBoard();
+      showToast(`已移入${state.view === "personal" ? "个人" : "企业"}回收站。`);
+    }
+
+    function openFolderSettingModal(folderName) {
+      const folder = getFolderConfigByName(folderName);
+      if (!folder || folder.name === "全部") return;
+      state.activeFolderName = folderName;
+      document.getElementById("folderSettingName").value = folder.name;
+      document.getElementById("folderPermissionGrid").innerHTML = state.enterpriseDepartments
+        .filter((department) => department !== "全部")
+        .map((department) => `
+          <div class="permission-row">
+            <div>
+              <strong>${department}</strong>
+              <span>组织架构同步部门权限</span>
+            </div>
+            <select data-permission-dept="${department}">
+              <option value="无权限" ${((folder.permissions || {})[department] || "无权限") === "无权限" ? "selected" : ""}>无权限</option>
+              <option value="查看/下载" ${((folder.permissions || {})[department] || "无权限") === "查看/下载" ? "selected" : ""}>查看/下载</option>
+              <option value="编辑" ${((folder.permissions || {})[department] || "无权限") === "编辑" ? "selected" : ""}>编辑</option>
+              <option value="可管理" ${((folder.permissions || {})[department] || "无权限") === "可管理" ? "selected" : ""}>可管理</option>
+            </select>
+          </div>
+        `).join("");
+      document.getElementById("folderSettingModal").classList.remove("hidden");
+    }
+
+    function closeFolderSettingModal() {
+      document.getElementById("folderSettingModal").classList.add("hidden");
+      state.activeFolderName = "";
+    }
+
+    function submitFolderSetting() {
+      const originalName = state.activeFolderName;
+      const folder = getFolderConfigByName(originalName);
+      if (!folder) return;
+      const nextName = document.getElementById("folderSettingName").value.trim();
+      if (!nextName) {
+        alert("请填写文件夹名称。");
+        return;
+      }
+      if (nextName !== originalName && getFolderNames().includes(nextName)) {
+        alert("该文件夹名称已存在，请更换名称。");
+        return;
+      }
+
+      const permissions = {};
+      document.querySelectorAll("[data-permission-dept]").forEach((select) => {
+        if (select.value !== "无权限") permissions[select.dataset.permissionDept] = select.value;
+      });
+
+      state.enterpriseFolders = state.enterpriseFolders.map((item) => item.name === originalName
+        ? { ...item, name: nextName, permissions }
+        : item);
+      state.enterpriseDocs = state.enterpriseDocs.map((doc) => doc.folder === originalName ? { ...doc, folder: nextName } : doc);
+      if (state.folderFilter === originalName) state.folderFilter = nextName;
+      closeFolderSettingModal();
+      renderHeader();
+      renderTable();
+      showToast("文件夹设置已保存。");
+    }
+
+    function deleteFolderToTrash() {
+      const folder = getFolderConfigByName(state.activeFolderName);
+      if (!folder) return;
+      const relatedDocs = state.enterpriseDocs.filter((doc) => doc.folder === folder.name);
+      state.enterpriseFolders = state.enterpriseFolders.filter((item) => item.name !== folder.name);
+      state.enterpriseDocs = state.enterpriseDocs.filter((doc) => doc.folder !== folder.name);
+      state.enterpriseTrash = [{
+        kind: "folder",
+        item: folder,
+        docs: relatedDocs,
+        deletedAt: formatNow()
+      }, ...state.enterpriseTrash];
+      if (state.folderFilter === folder.name) state.folderFilter = "全部";
+      closeFolderSettingModal();
+      renderHeader();
+      renderTable();
+      showToast(`文件夹“${folder.name}”已移入企业回收站。`);
+    }
+
+    function renderTrashModal() {
+      const trashItems = getTrashItems();
+      const isPersonal = state.view === "personal";
+      document.getElementById("trashTitle").textContent = isPersonal ? "个人回收站" : "企业回收站";
+      document.getElementById("trashDesc").textContent = isPersonal
+        ? "支持还原到个人工作区，或彻底删除不可恢复。"
+        : "支持还原到企业知识库，或彻底删除不可恢复。";
+      document.getElementById("trashList").innerHTML = trashItems.length
+        ? trashItems.map((entry, index) => {
+          const title = entry.kind === "folder" ? `${entry.item.name}（文件夹）` : entry.item.name;
+          const meta = entry.kind === "folder"
+            ? `适用部门：${entry.item.dept} · 包含 ${entry.docs.length} 个文件 · 删除时间：${entry.deletedAt}`
+            : `原位置：${isPersonal ? "个人工作区" : "企业知识库"} · 删除时间：${entry.deletedAt}`;
+          return `
+            <div class="trash-item">
+              <div>
+                <strong>${title}</strong>
+                <div class="trash-meta">${meta}</div>
+              </div>
+              <div class="trash-actions">
+                <button class="top-btn" data-trash-action="restore" data-index="${index}">还原</button>
+                <button class="top-btn danger" data-trash-action="purge" data-index="${index}">彻底删除</button>
+              </div>
+            </div>
+          `;
+        }).join("")
+        : `<div class="empty-state">回收站为空。</div>`;
+    }
+
+    function openTrashModal() {
+      renderTrashModal();
+      document.getElementById("trashModal").classList.remove("hidden");
+    }
+
+    function closeTrashModal() {
+      document.getElementById("trashModal").classList.add("hidden");
+    }
+
+    function restoreTrashItem(index) {
+      const trashItems = getTrashItems();
+      const entry = trashItems[index];
+      if (!entry) return;
+      if (state.view === "personal") {
+        state.personalTrash = state.personalTrash.filter((_, itemIndex) => itemIndex !== index);
+        state.personalDocs = [entry.item, ...state.personalDocs];
+      } else if (entry.kind === "folder") {
+        state.enterpriseTrash = state.enterpriseTrash.filter((_, itemIndex) => itemIndex !== index);
+        state.enterpriseFolders = [...state.enterpriseFolders, entry.item];
+        state.enterpriseDocs = [...entry.docs, ...state.enterpriseDocs];
+      } else {
+        state.enterpriseTrash = state.enterpriseTrash.filter((_, itemIndex) => itemIndex !== index);
+        state.enterpriseDocs = [entry.item, ...state.enterpriseDocs];
+      }
+      renderHeader();
+      renderTable();
+      renderTrashModal();
+      showToast("已还原。");
+    }
+
+    function purgeTrashItem(index) {
+      if (state.view === "personal") {
+        state.personalTrash = state.personalTrash.filter((_, itemIndex) => itemIndex !== index);
+      } else {
+        state.enterpriseTrash = state.enterpriseTrash.filter((_, itemIndex) => itemIndex !== index);
+      }
+      renderTrashModal();
+      showToast("已彻底删除。");
+    }
+
+    function renderFolderBoard() {
+      const board = document.getElementById("folderBoard");
+      const isPersonalWorkspace = state.view === "personal";
+      board.classList.toggle("hidden", isPersonalWorkspace);
+      if (isPersonalWorkspace) {
+        board.innerHTML = "";
+        return;
+      }
+
+      const docs = state.enterpriseDocs.filter((doc) => {
+        if (state.role === "admin") return true;
+        return state.authorizedDepartments.includes(doc.department);
+      });
+      const folderConfigs = getVisibleFolderConfigs();
+      const cards = folderConfigs.map((folder) => {
+        const count = folder.name === "全部"
+          ? docs.length
+          : docs.filter((doc) => doc.folder === folder.name).length;
+        const settingButton = state.role === "admin" && folder.name !== "全部"
+          ? `<button class="folder-manage-btn" data-folder-setting="${folder.name}">管理</button>`
+          : "";
+        return `
+          <div class="folder-card ${state.folderFilter === folder.name ? "active" : ""}" data-folder-card="${folder.name}">
+            <div class="folder-top">
+              <span class="folder-mark">${folder.icon}</span>
+              <div class="folder-top-right">
+                <span class="folder-count">${count} 个文件</span>
+                ${settingButton}
+              </div>
+            </div>
+            <div class="folder-title">${folder.name === "全部" ? "全部文件" : folder.name}</div>
+            <div class="folder-desc">${folder.desc}</div>
+            <span class="folder-meta">${folder.dept}</span>
+            <div class="folder-owner">所有者：${folder.owner}</div>
+          </div>
+        `;
+      });
+      if (state.role === "admin") {
+        cards.push(`
+          <div class="folder-card create" data-create-folder="true">
+            <div class="folder-top">
+              <span class="folder-mark">+</span>
+              <span class="folder-count">管理员操作</span>
+            </div>
+            <div class="folder-title">新建文件夹</div>
+            <div class="folder-desc">创建新的一级文件夹，与现有目录并列展示，并指定适用部门。</div>
+            <span class="folder-meta">一级文件夹</span>
+            <div class="folder-owner">所有者：当前管理员</div>
+          </div>
+        `);
+      }
+      board.innerHTML = cards.join("");
+    }
+
+    function renderFilters() {
+      const isPersonalWorkspace = state.view === "personal";
+      const primaryTabs = document.getElementById("typeTabs");
+      const departmentFilters = document.getElementById("departmentFilters");
+
+      if (isPersonalWorkspace) {
+        primaryTabs.innerHTML = `
+          <div class="tab ${state.typeFilter === "全部" ? "active" : ""}" data-type="全部">全部</div>
+          <div class="tab ${state.typeFilter === "报告文件" ? "active" : ""}" data-type="报告文件">报告文件</div>
+          <div class="tab ${state.typeFilter === "自行上传" ? "active" : ""}" data-type="自行上传">自行上传</div>
+          <div class="tab ${state.typeFilter === "录音文件" ? "active" : ""}" data-type="录音文件">录音文件</div>
+          <div class="tab ${state.typeFilter === "PPT文件" ? "active" : ""}" data-type="PPT文件">PPT文件</div>
+        `;
+        departmentFilters.innerHTML = "";
+      } else {
+        primaryTabs.innerHTML = "";
+        const departmentOptions = state.role === "admin"
+          ? state.enterpriseDepartments
+          : ["全部", ...state.authorizedDepartments];
+        departmentFilters.innerHTML = departmentOptions.map((department) => `
+          <button class="flow-chip ${state.departmentFilter === department ? "active" : ""}" data-department="${department}">${department}</button>
+        `).join("");
+      }
+    }
+
+    function renderModules() {
+      let modules;
+      if (state.view === "personal") {
+        modules = [
+          { title: "智能创作PPT", desc: "基于个人工作区文件生成内容，也可进一步沉淀到企业。", icon: "Z", tag: "个人空间" },
+          { title: "上传文件", desc: "文件先进入企业账号下的个人工作区，再决定是否沉淀到企业。", icon: "↑", tag: "个人导入" },
+          { title: "添加网址", desc: "支持先写入个人工作区，再根据需要复制到企业。", icon: "⊕", tag: "个人沉淀" },
+          { title: "粘贴文字", desc: "先形成个人草稿，再选择是否迁移到企业知识库。", icon: "T", tag: "个人草稿" }
+        ];
+      } else if (state.role === "member") {
+        modules = [
+          { title: "智能创作PPT", desc: "调用企业共享模板与文件夹内资料，生成团队可复用内容。", icon: "Z", tag: "成员可用" },
+          { title: "上传文件", desc: "上传到当前有权限的文件夹，并沿用管理员定义的分类规则。", icon: "↑", tag: "上传到企业" },
+          { title: "添加网址", desc: "将行业资讯和竞品链接沉淀到指定文件夹。", icon: "⊕", tag: "团队共享" },
+          { title: "粘贴文字", desc: "将碎片信息整理为团队可检索的企业知识，并纳入既有目录。", icon: "T", tag: "沉淀团队资产" }
+        ];
+      } else {
+        modules = [
+          { title: "智能创作PPT", desc: "使用企业模板中心和文件夹内资料生成标准化材料。", icon: "Z", tag: "企业模板" },
+          { title: "上传文件", desc: "上传时直接归入目标文件夹，并指定所属部门与归属范围。", icon: "↑", tag: "治理入口" },
+          { title: "添加网址", desc: "统一沉淀行业网址、标准资料和公共链接资源到指定目录。", icon: "⊕", tag: "企业治理" },
+          { title: "粘贴文字", desc: "快速补录制度、话术和团队规则，并由管理员持续治理。", icon: "T", tag: "统一规范" }
+        ];
+      }
+
+      document.getElementById("moduleRow").innerHTML = modules.map((item) => `
+        <div class="module-card">
+          <div class="module-top">
+            <span><span class="module-icon">${item.icon}</span> ${item.title}</span>
+          </div>
+          <p>${item.desc}</p>
+          <span class="module-tag">${item.tag}</span>
+        </div>
+      `).join("");
+    }
+
+    function renderHeader() {
+      const isPersonalWorkspace = state.view === "personal";
+      const isAdmin = state.role === "admin";
+
+      document.querySelectorAll("#personaSwitch button").forEach((btn) => {
+        btn.classList.toggle("active", btn.dataset.role === state.role);
+      });
+      document.querySelectorAll("#spaceSwitch button").forEach((btn) => {
+        btn.classList.toggle("active", btn.dataset.view === state.view);
+      });
+
+      document.getElementById("pageTitle").textContent = isPersonalWorkspace ? "个人工作区" : "企业知识库";
+      if (isPersonalWorkspace) {
+        document.getElementById("pageDesc").textContent = isAdmin
+          ? "管理个人工作资料，并快速归档到企业知识库。"
+          : "管理你的个人工作资料，并将本人文件同步到企业知识库。";
+        document.getElementById("titleMeta").textContent = "当前账号个人工作区";
+      } else {
+        document.getElementById("pageDesc").textContent = isAdmin
+          ? "统一查看下属部门资料，并通过一级文件夹和部门维度进行治理。"
+          : "仅查看企业管理平台已授权的企业文件夹与资料，并在授权范围内上传团队文件。";
+        document.getElementById("titleMeta").textContent = "百智科技 / 销售中心 / 华北一部";
+      }
+
+      document.getElementById("roleChip").textContent = "当前身份：" + (isAdmin ? "企业管理员" : "企业成员");
+      document.getElementById("tableModeHint").textContent = "当前查看：" + (isPersonalWorkspace ? "个人工作区" : "企业知识库");
+      document.getElementById("primaryFilterLabel").textContent = isPersonalWorkspace ? "文件类型" : "文件夹";
+      document.getElementById("primaryFilterMeta").classList.toggle("hidden", isPersonalWorkspace);
+      document.getElementById("typeHeader").textContent = isPersonalWorkspace ? "内容分类" : "所属文件夹";
+      document.getElementById("flowHeader").textContent = "来源/流转";
+      document.getElementById("extraHeader").textContent = isPersonalWorkspace ? "共享时间" : "文件格式";
+      document.getElementById("deptHeader").classList.toggle("hidden", isPersonalWorkspace);
+
+      document.getElementById("copyBtn").classList.toggle("hidden", !isPersonalWorkspace);
+      document.getElementById("moveBtn").classList.toggle("hidden", !isPersonalWorkspace);
+      document.getElementById("trashBtn").classList.toggle("hidden", state.view === "enterprise" && !isAdmin);
+      document.getElementById("ruleBtn").classList.toggle("hidden", !isAdmin);
+      document.getElementById("folderSectionHead").classList.toggle("hidden", isPersonalWorkspace);
+      document.getElementById("folderCreateBtn").classList.toggle("hidden", isPersonalWorkspace || !isAdmin);
+      document.getElementById("primaryFilterPanel").classList.toggle("hidden", !isPersonalWorkspace);
+      document.getElementById("departmentFilterRow").classList.toggle("hidden", isPersonalWorkspace);
+      document.getElementById("flowFilterRow").classList.toggle("hidden", isPersonalWorkspace);
+      renderFolderBoard();
+      renderFilters();
+      document.querySelectorAll("#flowFilters .flow-chip").forEach((chip) => {
+        chip.classList.toggle("active", chip.dataset.flow === state.flowFilter);
+      });
+    }
+
+    function renderTable() {
+      const docs = getDocs();
+      const selectedText = state.view === "personal" && state.selectedIds.length
+        ? `，已选 ${state.selectedIds.length} 个`
+        : "";
+      document.getElementById("tableCount").textContent = `共 ${docs.length} 个文件${selectedText}`;
+      const tbody = document.getElementById("tableBody");
+      const isPersonalWorkspace = state.view === "personal";
+      const isAdmin = state.role === "admin";
+
+      tbody.innerHTML = docs.map((doc) => {
+        const isPptFile = doc.type === "PPT文件" || doc.type === "PPT";
+        const isAiEditorFile = doc.type === "报告文件" || doc.type === "录音文件" || doc.type === "PDF" || doc.type === "音频";
+        const typeClass = isPersonalWorkspace
+          ? doc.type === "报告文件" || doc.type === "PPT文件" ? "blue" : doc.type === "录音文件" ? "orange" : ""
+          : "blue";
+        const flowClass = doc.flow.includes("企业") ? "blue" : doc.flow.includes("复制") || doc.flow.includes("迁移") ? "orange" : "";
+        const statusClass = doc.status === "已入库" || doc.status === "已发布" ? "green" : "orange";
+        const noteText = isPersonalWorkspace ? doc.note : `来源：${doc.flow} · 范围：${doc.extra} · ${doc.note}`;
+        let editAction = `<button class="action-btn primary">查看预览</button>`;
+        if (isPptFile) {
+          editAction = `<button class="action-btn ppt">AI PPT编辑</button>`;
+        } else if (isAiEditorFile) {
+          editAction = `<button class="action-btn ai">AI 编辑器</button>`;
+        }
+        const deleteAction = isPersonalWorkspace || isAdmin
+          ? `<button class="action-btn danger" data-delete-doc="${doc.id}">移入回收站</button>`
+          : "";
+
+        const actions = isPersonalWorkspace
+          ? `${editAction}<button class="action-btn primary" data-action="copy" data-id="${doc.id}">复制到企业</button><button class="action-btn" data-action="move" data-id="${doc.id}">迁移到企业</button>${deleteAction}`
+          : isAdmin
+            ? `${editAction}<button class="action-btn primary">查看预览</button>${deleteAction}`
+            : `<button class="action-btn primary">查看预览</button>`;
+        const primaryCell = isPersonalWorkspace
+          ? `<span class="pill ${typeClass}">${doc.type}</span>`
+          : `<span class="pill ${typeClass}">${doc.folder}</span>`;
+        const secondaryCell = isPersonalWorkspace
+          ? `<span class="pill ${flowClass}">${doc.flow}</span>`
+          : `<span class="pill ${flowClass}">${doc.flow}</span>`;
+        const departmentCell = isPersonalWorkspace
+          ? ""
+          : `<td>${doc.department}</td>`;
+        const extraCell = isPersonalWorkspace
+          ? doc.extra
+          : `<span class="pill">${doc.type}</span>`;
+
+        return `
+          <tr>
+            <td class="checkbox-col"><input type="checkbox" data-id="${doc.id}" ${isPersonalWorkspace ? "" : "disabled"} ${state.selectedIds.includes(doc.id) ? "checked" : ""} /></td>
+            <td>
+              <div class="file-name">
+                <div class="file-icon">${doc.icon}</div>
+                <div class="file-main">
+                  <strong>${doc.name}</strong>
+                  <div class="file-note">${noteText}</div>
+                </div>
+              </div>
+            </td>
+            <td>${doc.size}</td>
+            <td>${primaryCell}</td>
+            <td>${secondaryCell}</td>
+            ${departmentCell}
+            <td><span class="pill green">${doc.summary}</span></td>
+            <td><span class="pill ${statusClass}">${doc.status}</span></td>
+            <td>${extraCell}</td>
+            <td>${doc.updatedAt}</td>
+            <td><div class="row-actions">${actions}</div></td>
+          </tr>
+        `;
+      }).join("");
+
+      const selectAll = document.getElementById("selectAll");
+      if (isPersonalWorkspace && docs.length) {
+        selectAll.checked = docs.every((doc) => state.selectedIds.includes(doc.id));
+        selectAll.indeterminate = !selectAll.checked && docs.some((doc) => state.selectedIds.includes(doc.id));
+      } else {
+        selectAll.checked = false;
+        selectAll.indeterminate = false;
+      }
+    }
+
+    function formatNow() {
+      const now = new Date();
+      const pad = (value) => String(value).padStart(2, "0");
+      return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}`;
+    }
+
+    function inferFormatLabel(name) {
+      const lowerName = name.toLowerCase();
+      if (lowerName.endsWith(".pdf")) return "PDF";
+      if (lowerName.endsWith(".ppt") || lowerName.endsWith(".pptx")) return "PPT";
+      if (lowerName.endsWith(".doc") || lowerName.endsWith(".docx") || lowerName.endsWith(".md")) return "Word";
+      if (lowerName.endsWith(".xls") || lowerName.endsWith(".xlsx")) return "Excel";
+      if (lowerName.endsWith(".wav") || lowerName.endsWith(".mp3") || lowerName.endsWith(".m4a")) return "音频";
+      return "文档";
+    }
+
+    function getSelectedPersonalDocs(ids) {
+      return state.personalDocs.filter((doc) => ids.includes(doc.id));
+    }
+
+    function getFolderNames() {
+      return state.enterpriseFolders
+        .filter((folder) => folder.name !== "全部")
+        .map((folder) => folder.name);
+    }
+
+    function getVisibleDepartmentOptions() {
+      return state.role === "admin" ? state.enterpriseDepartments.filter((department) => department !== "全部") : state.authorizedDepartments;
+    }
+
+    function renderFolderDeptOptions() {
+      document.getElementById("folderDept").innerHTML = state.enterpriseDepartments
+        .filter((department) => department !== "全部")
+        .map((department) => `<option value="${department}">${department}</option>`)
+        .join("");
+    }
+
+    function openTransferModal(mode, ids) {
+      const docs = getSelectedPersonalDocs(ids);
+      if (!docs.length) {
+        alert("请先选择要处理的个人工作区文件。");
+        return;
+      }
+
+      state.transferMode = mode;
+      state.transferIds = ids;
+
+      document.getElementById("transferTitle").textContent = mode === "copy" ? "复制到企业知识库" : "迁移到企业知识库";
+      document.getElementById("transferDesc").textContent = mode === "copy"
+        ? "将个人工作区文件复制到企业知识库，并选择目标文件夹、所属部门与归属范围。"
+        : "将个人工作区文件迁移到企业知识库，并归入目标文件夹与所属部门。";
+      document.getElementById("transferSummaryTitle").textContent = `已选择 ${docs.length} 个文件`;
+      document.getElementById("transferSummaryHint").textContent = mode === "copy"
+        ? "复制后将保留个人工作区原文件。"
+        : "迁移后将从个人工作区移除，仅在企业知识库中保留。";
+      document.getElementById("transferReasonHint").textContent = mode === "copy"
+        ? "复制适合保留个人草稿，同时沉淀团队可复用版本。"
+        : "迁移适合将已整理完成的资料正式转入企业知识库。";
+      document.getElementById("transferSubmit").textContent = mode === "copy" ? "确认复制" : "确认迁移";
+      document.getElementById("transferList").innerHTML = docs.map((doc) => `<span class="transfer-tag">${doc.name}</span>`).join("");
+      document.getElementById("targetFolder").innerHTML = getFolderNames()
+        .map((folder) => `<option value="${folder}">${folder}</option>`)
+        .join("");
+      document.getElementById("targetDepartment").innerHTML = getVisibleDepartmentOptions()
+        .map((department) => `<option value="${department}">${department}</option>`)
+        .join("");
+      document.getElementById("targetReason").value = "";
+      document.getElementById("transferModal").classList.remove("hidden");
+    }
+
+    function closeTransferModal() {
+      document.getElementById("transferModal").classList.add("hidden");
+      state.transferIds = [];
+    }
+
+    function showToast(message) {
+      const toast = document.getElementById("toast");
+      toast.textContent = message;
+      toast.classList.remove("hidden");
+      clearTimeout(showToast.timer);
+      showToast.timer = setTimeout(() => {
+        toast.classList.add("hidden");
+      }, 2600);
+    }
+
+    function submitTransfer() {
+      const docs = getSelectedPersonalDocs(state.transferIds);
+      if (!docs.length) {
+        closeTransferModal();
+        renderTable();
+        return;
+      }
+
+      const folder = document.getElementById("targetFolder").value;
+      const department = document.getElementById("targetDepartment").value;
+      const scope = document.getElementById("targetScope").value;
+      const reason = document.getElementById("targetReason").value.trim();
+      const flow = state.transferMode === "copy" ? "个人复制" : "个人迁移";
+      const now = formatNow();
+
+      const enterpriseCopies = docs.map((doc, index) => ({
+        ...doc,
+        id: `e${Date.now()}${index}`,
+        type: inferFormatLabel(doc.name),
+        folder,
+        department,
+        flow,
+        summary: "已入库",
+        status: "已发布",
+        extra: scope,
+        updatedAt: now,
+        note: reason || `从个人工作区${state.transferMode === "copy" ? "复制" : "迁移"}到${folder}。`
+      }));
+
+      state.enterpriseDocs = [...enterpriseCopies, ...state.enterpriseDocs];
+      if (state.transferMode === "move") {
+        state.personalDocs = state.personalDocs.filter((doc) => !state.transferIds.includes(doc.id));
+      }
+      state.selectedIds = state.selectedIds.filter((id) => !state.transferIds.includes(id));
+      closeTransferModal();
+      renderTable();
+      showToast(`${docs.length} 个文件已${state.transferMode === "copy" ? "复制" : "迁移"}到 ${folder}。`);
+    }
+
+    function openFolderModal() {
+      renderFolderDeptOptions();
+      document.getElementById("folderName").value = "";
+      document.getElementById("folderModal").classList.remove("hidden");
+    }
+
+    function closeFolderModal() {
+      document.getElementById("folderModal").classList.add("hidden");
+    }
+
+    function submitFolder() {
+      const name = document.getElementById("folderName").value.trim();
+      if (!name) {
+        alert("请填写文件夹名称。");
+        return;
+      }
+
+      if (name.includes("/")) {
+        alert("一期仅支持一级文件夹，请不要填写层级路径。");
+        return;
+      }
+
+      if (getFolderNames().includes(name)) {
+        alert("该文件夹已存在，请更换名称。");
+        return;
+      }
+
+      const dept = document.getElementById("folderDept").value;
+      state.enterpriseFolders = [...state.enterpriseFolders, { name, desc: "管理员自定义创建的一级文件夹。", dept, owner: state.currentUser, icon: "📁" }];
+      state.folderFilter = name;
+      closeFolderModal();
+      renderHeader();
+      renderTable();
+      showToast(`已创建文件夹：${name}`);
+    }
+
+    document.getElementById("personaSwitch").addEventListener("click", (e) => {
+      const btn = e.target.closest("button[data-role]");
+      if (!btn) return;
+      state.role = btn.dataset.role;
+      state.departmentFilter = "全部";
+      state.folderFilter = "全部";
+      render();
+    });
+
+    document.getElementById("spaceSwitch").addEventListener("click", (e) => {
+      const btn = e.target.closest("button[data-view]");
+      if (!btn) return;
+      state.view = btn.dataset.view;
+      state.selectedIds = [];
+      state.typeFilter = "全部";
+      state.folderFilter = "全部";
+      state.departmentFilter = "全部";
+      state.flowFilter = "全部";
+      render();
+    });
+
+    document.getElementById("typeTabs").addEventListener("click", (e) => {
+      const tab = e.target.closest(".tab[data-type]");
+      if (!tab) return;
+      state.typeFilter = tab.dataset.type;
+      renderHeader();
+      renderTable();
+    });
+
+    document.getElementById("folderBoard").addEventListener("click", (e) => {
+      const createCard = e.target.closest("[data-create-folder]");
+      if (createCard) {
+        openFolderModal();
+        return;
+      }
+      const settingBtn = e.target.closest("[data-folder-setting]");
+      if (settingBtn) {
+        e.stopPropagation();
+        openFolderSettingModal(settingBtn.dataset.folderSetting);
+        return;
+      }
+      const card = e.target.closest("[data-folder-card]");
+      if (!card) return;
+      state.folderFilter = card.dataset.folderCard;
+      renderHeader();
+      renderTable();
+    });
+
+    document.getElementById("folderInfoBtn").addEventListener("click", (e) => {
+      e.stopPropagation();
+      document.getElementById("folderInfoPop").classList.toggle("hidden");
+    });
+
+    document.getElementById("folderCreateBtn").addEventListener("click", openFolderModal);
+
+    document.getElementById("departmentFilters").addEventListener("click", (e) => {
+      const chip = e.target.closest(".flow-chip[data-department]");
+      if (!chip) return;
+      state.departmentFilter = chip.dataset.department;
+      renderHeader();
+      renderTable();
+    });
+
+    document.getElementById("flowFilters").addEventListener("click", (e) => {
+      const chip = e.target.closest(".flow-chip[data-flow]");
+      if (!chip) return;
+      state.flowFilter = chip.dataset.flow;
+      renderHeader();
+      renderTable();
+    });
+
+    document.getElementById("searchInput").addEventListener("input", (e) => {
+      state.keyword = e.target.value;
+      renderTable();
+    });
+
+    document.getElementById("copyBtn").addEventListener("click", () => {
+      openTransferModal("copy", state.selectedIds);
+    });
+
+    document.getElementById("moveBtn").addEventListener("click", () => {
+      openTransferModal("move", state.selectedIds);
+    });
+
+    document.getElementById("trashBtn").addEventListener("click", openTrashModal);
+
+    document.getElementById("tableBody").addEventListener("click", (e) => {
+      const deleteBtn = e.target.closest("[data-delete-doc]");
+      if (deleteBtn) {
+        const targetDocs = state.view === "personal" ? state.personalDocs : state.enterpriseDocs;
+        const doc = targetDocs.find((item) => item.id === deleteBtn.dataset.deleteDoc);
+        if (doc) trashFile(doc);
+        return;
+      }
+      const actionBtn = e.target.closest("button[data-action][data-id]");
+      if (!actionBtn) return;
+      openTransferModal(actionBtn.dataset.action, [actionBtn.dataset.id]);
+    });
+
+    document.getElementById("tableBody").addEventListener("change", (e) => {
+      const checkbox = e.target.closest('input[type="checkbox"][data-id]');
+      if (!checkbox) return;
+      if (checkbox.checked) {
+        state.selectedIds = [...new Set([...state.selectedIds, checkbox.dataset.id])];
+      } else {
+        state.selectedIds = state.selectedIds.filter((id) => id !== checkbox.dataset.id);
+      }
+      renderTable();
+    });
+
+    document.getElementById("selectAll").addEventListener("change", (e) => {
+      if (state.view !== "personal") return;
+      const currentIds = getDocs().map((doc) => doc.id);
+      state.selectedIds = e.target.checked ? currentIds : [];
+      renderTable();
+    });
+
+    document.getElementById("ruleBtn").addEventListener("click", () => {
+      alert("企业成员可见范围由企业管理平台授权控制；一级管理员可查看下属部门文件；企业知识库一期仅支持一级文件夹，并按部门和归属范围生效。");
+    });
+    document.getElementById("folderSettingClose").addEventListener("click", closeFolderSettingModal);
+    document.getElementById("folderSettingCancel").addEventListener("click", closeFolderSettingModal);
+    document.getElementById("folderSettingSubmit").addEventListener("click", submitFolderSetting);
+    document.getElementById("folderDeleteBtn").addEventListener("click", deleteFolderToTrash);
+    document.getElementById("folderSettingModal").addEventListener("click", (e) => {
+      if (e.target.id === "folderSettingModal") closeFolderSettingModal();
+    });
+    document.getElementById("transferClose").addEventListener("click", closeTransferModal);
+    document.getElementById("transferCancel").addEventListener("click", closeTransferModal);
+    document.getElementById("transferSubmit").addEventListener("click", submitTransfer);
+    document.getElementById("transferModal").addEventListener("click", (e) => {
+      if (e.target.id === "transferModal") closeTransferModal();
+    });
+    document.getElementById("folderClose").addEventListener("click", closeFolderModal);
+    document.getElementById("folderCancel").addEventListener("click", closeFolderModal);
+    document.getElementById("folderSubmit").addEventListener("click", submitFolder);
+    document.getElementById("folderModal").addEventListener("click", (e) => {
+      if (e.target.id === "folderModal") closeFolderModal();
+    });
+    document.getElementById("trashClose").addEventListener("click", closeTrashModal);
+    document.getElementById("trashModal").addEventListener("click", (e) => {
+      if (e.target.id === "trashModal") closeTrashModal();
+    });
+    document.getElementById("trashList").addEventListener("click", (e) => {
+      const actionBtn = e.target.closest("[data-trash-action][data-index]");
+      if (!actionBtn) return;
+      const index = Number(actionBtn.dataset.index);
+      if (actionBtn.dataset.trashAction === "restore") {
+        restoreTrashItem(index);
+      } else {
+        purgeTrashItem(index);
+      }
+    });
+    document.addEventListener("click", (e) => {
+      if (e.target.closest("#folderInfoBtn") || e.target.closest("#folderInfoPop")) return;
+      document.getElementById("folderInfoPop").classList.add("hidden");
+    });
+
+    function render() {
+      renderHeader();
+      renderModules();
+      renderTable();
+    }
+
+    render();
+  </script>
+</body>
+</html>

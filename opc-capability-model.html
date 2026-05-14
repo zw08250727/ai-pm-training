@@ -1339,6 +1339,29 @@
       border-radius: calc(var(--radius) - 10px);
     }
 
+    .ring[data-variant="option"] {
+      border-style: dashed;
+      background: color-mix(in srgb, var(--color) 2%, transparent);
+      box-shadow: none;
+    }
+
+    .ring[data-variant="option"]:before {
+      display: none;
+    }
+
+    .ring-note {
+      position: absolute;
+      right: 18px;
+      top: calc(var(--cell-h) + 10px);
+      padding: 8px 11px;
+      border: 1px dashed var(--l3);
+      border-radius: 999px;
+      color: var(--l3);
+      background: rgba(255,255,255,.92);
+      font: 900 12px/1 var(--sans);
+      white-space: nowrap;
+    }
+
     .ring-label {
       position: absolute;
       left: 18px;
@@ -1430,6 +1453,46 @@
       font-weight: 750;
     }
 
+    .persona-board h3 {
+      margin: 0 0 10px;
+      color: var(--ink);
+      font-size: 18px;
+      line-height: 1.3;
+    }
+
+    .persona-card {
+      padding: 13px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255,255,255,.92);
+    }
+
+    .persona-card b {
+      display: block;
+      margin-bottom: 7px;
+      color: var(--ink);
+      font-size: 13px;
+      line-height: 1.35;
+    }
+
+    .persona-card span {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.6;
+      font-weight: 750;
+    }
+
+    .persona-board {
+      margin-top: 18px;
+    }
+
+    .persona-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 10px;
+    }
+
     .two-col {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -1459,6 +1522,7 @@
 
     @media (max-width: 1100px) {
       .level-grid { grid-template-columns: repeat(2, 1fr); }
+      .persona-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .two-col { grid-template-columns: 1fr; }
     }
 
@@ -1468,6 +1532,7 @@
       .section-head { display: block; }
       .section-head p { margin-top: 10px; }
       .level-grid { grid-template-columns: 1fr; }
+      .persona-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -1478,7 +1543,7 @@
       <section class="page-title">
         <div class="kicker">OPC Capability Model · AI2C Product Team</div>
         <h1>AI2C产品组 OPC 能力模型</h1>
-        <p>用横向能力模型说明 INS、A1-A5、OPS、BIZ 的能力边界，并用 OPC-L1 到 OPC-L4 的圈层图定义产品组能力成熟度。</p>
+        <p>用横向能力模型说明 INS、A1-A5、OPS、BIZ 的能力边界，并用“分项坐标 + 综合定位”的方式定义产品组能力成熟度。</p>
       </section>
     </header>
 
@@ -1494,7 +1559,7 @@
             <h4 class="subline-title">01｜INS 洞察线</h4>
             <p>把散乱输入变成清晰问题：先看懂谁在什么场景里遇到什么痛点，再判断为什么现在要做、要做到什么程度。</p>
             <div class="role-stack">
-              <div class="role-chip" style="--role-color:var(--pm)" data-standard-key="INS"><b>INS</b><span>调研摘要、痛点归因、场景链路、客群分层、目标定义、证据拆解。</span></div>
+              <div class="role-chip" style="--role-color:var(--pm)" data-standard-key="INS"><b>INS</b><span>调研摘要、痛点归因、场景链路、客群分层、负责域数据分析、关键指标识别、改进发现。</span></div>
             </div>
           </div>
 
@@ -1515,7 +1580,7 @@
             <h4 class="subline-title">01｜OPS 2C 用户运营线</h4>
             <p>围绕上线后的用户目标，把需求拆成增长、体验、留存或收入动作，并能持续复盘。</p>
             <div class="role-stack">
-              <div class="role-chip" style="--role-color:var(--ops)" data-standard-key="OPS"><b>OPS</b><span>目标拆解、路径分析、触达策略、实验设计、数据复盘、迭代优化。</span></div>
+              <div class="role-chip" style="--role-color:var(--ops)" data-standard-key="OPS"><b>OPS</b><span>目标拆解、路径分析、外部平台种子用户、用户交流、共创反馈、运营转化。</span></div>
             </div>
             <h4 class="subline-title" style="margin-top:10px;">02｜BIZ 2B 商业转化线</h4>
             <p>产品经理能把产品能力转成客户听得懂的方案与价值表达，并直接对接客户推进试点、答疑和转化闭环。</p>
@@ -1535,12 +1600,12 @@
 <section class="section">
       <div class="section-head">
         <h2>2. OPC 层级总览</h2>
-        <p>OPC 层级是人的综合能力成熟度，能力坐标是具体技能点。层级越高，覆盖链路越长，单点能力越深。</p>
+        <p>OPC 层级是人的综合成熟度，能力坐标是具体技能点。单项能力可以很强，但综合定位要看覆盖范围、关键短板和闭环能力。</p>
       </div>
       <div class="level-grid">
         <article class="level-card" style="--color:var(--l1)">
-          <h3>OPC-L1｜AI 结构化执行者</h3>
-          <p>让 AI 产物从“能看”变成“有结构、可评审”。</p>
+          <h3>OPC-L1｜结构化执行型</h3>
+          <p>能用 AI 把输入变成有结构、可讨论的产物。</p>
           <ul>
             <li>掌握 AI 五件套。</li>
             <li>能做竞品、反馈、PRD 初稿、质量检查。</li>
@@ -1548,39 +1613,50 @@
           </ul>
         </article>
         <article class="level-card" style="--color:var(--l2)">
-          <h3>OPC-L2｜AI 产品交付者</h3>
+          <h3>OPC-L2｜产品交付型</h3>
           <p>能独立交付一个可进入评审和基础验收的产品包。</p>
           <ul>
             <li>能拆场景、角色、对象、流程、状态。</li>
             <li>能输出 PRD、业务 Demo、评审材料、验收清单。</li>
             <li>能识别 AI 产物的事实错误和范围蔓延。</li>
+            <li>能基于负责域数据或外部用户输入发现问题线索。</li>
           </ul>
         </article>
         <article class="level-card" style="--color:var(--l3)">
-          <h3>OPC-L3｜AI 工作流负责人</h3>
-          <p>从个人交付，升级为团队可复用，并满足 A5-L2 静态部署能力。</p>
+          <h3>OPC-L3｜工作流负责型</h3>
+          <p>A 线交付稳定，能沉淀方法、带动团队复用，并在至少一个闭环方向做深。</p>
           <ul>
             <li>能沉淀 SOP、提示词模板、检查清单。</li>
-            <li>能定义团队级产物 Rubric。</li>
-            <li>能完成静态 Demo 部署，并组织他人按同一流程稳定产出。</li>
+            <li>能定义团队级产物 Rubric，把数据洞察和用户反馈沉淀为方法化闭环。</li>
+            <li>能在 INS / OPS / BIZ 至少一个方向形成稳定闭环。</li>
           </ul>
         </article>
         <article class="level-card" style="--color:var(--l4)">
-          <h3>OPC-L4｜AI 业务增长型 OPC</h3>
-          <p>把 AI 能力用于跨部门交付和业务增长。</p>
+          <h3>OPC-L4｜业务增长型</h3>
+          <p>把 AI 交付、用户运营、客户反馈和指标增长打通，直接影响业务结果。</p>
           <ul>
             <li>能把客户问题转成方案、演示和价值表达。</li>
             <li>满足 A5-L3 联调部署与 Agent 修复，能直接参与客户沟通、试点和转化推进。</li>
-            <li>能把用户数据和客户反馈反哺产品规划。</li>
+            <li>能把北极星指标、用户共创反馈和客户反馈反哺产品规划。</li>
           </ul>
         </article>
+      </div>
+      <div class="persona-board">
+        <h3>能力画像类型</h3>
+        <div class="persona-grid">
+          <div class="persona-card"><b>AI 产品交付专长型</b><span>A1-A5 强，INS/OPS/BIZ 弱；定位为 A 线高阶，OPC 综合 L2-L3。</span></div>
+          <div class="persona-card"><b>洞察策略型</b><span>INS 强，A 线中等；问题定义和策略判断强，需补 AI 交付闭环。</span></div>
+          <div class="persona-card"><b>用户运营型</b><span>OPS 强，A 线中等；用户增长和复盘强，需补产品交付标准化。</span></div>
+          <div class="persona-card"><b>商业转化型</b><span>BIZ 强，A 线中等；客户价值和转化强，需补 AI 产物化能力。</span></div>
+          <div class="persona-card"><b>综合闭环型</b><span>INS / A线 / OPS或BIZ 较均衡；定位为 OPC-L3 或 OPC-L4 候选。</span></div>
+        </div>
       </div>
     </section>
 
 <section class="section">
       <div class="section-head">
         <h2>3. 坐标轴圈层图</h2>
-        <p>读图方式：先看圈定范围，再看圈的高度。OPC-L3 与 OPC-L4 都覆盖完整链路，但 L4 在 OPS / BIZ 上达到 L3 业务增长与客户转化深度。</p>
+        <p>读图方式：坐标轴看分项能力，圈层看综合成熟度。A 线很高但 INS / OPS / BIZ 不闭环时，应标记为单项高阶，而不是直接等同 OPC-L4。</p>
       </div>
       <div class="axis-shell">
         <div class="axis-board" aria-label="OPC 坐标轴圈层图">
@@ -1606,18 +1682,22 @@
           </div>
 
           <div class="rings" aria-hidden="true">
+            <div class="ring" style="--start:1;--span:8;--depth:4;--top:0px;--bottom:0px;--inset:0px;--stroke:2px;--radius:38px;--fill:3%;--color:var(--l4);">
+              <div class="ring-label"><code>OPC-L4</code> 业务增长型</div>
+            </div>
             <div class="ring" style="--start:1;--span:4;--depth:2;--top:14px;--bottom:12px;--inset:12px;--stroke:2px;--radius:24px;--fill:6%;--color:var(--l1);">
-              <div class="ring-label"><code>OPC-L1</code> AI结构化执行者</div>
+              <div class="ring-label"><code>OPC-L1</code> 结构化执行型</div>
             </div>
             <div class="ring" style="--start:1;--span:6;--depth:3;--top:40px;--bottom:18px;--inset:9px;--stroke:2px;--radius:28px;--fill:5%;--color:var(--l2);">
-              <div class="ring-label"><code>OPC-L2</code> AI产品交付者</div>
+              <div class="ring-label"><code>OPC-L2</code> 产品交付型</div>
             </div>
-            <div class="ring" style="--start:1;--span:8;--depth:3;--top:8px;--bottom:14px;--inset:6px;--stroke:2px;--radius:32px;--fill:4%;--color:var(--l3);">
-              <div class="ring-label"><code>OPC-L3</code> AI工作流负责人</div>
+            <div class="ring" style="--start:2;--span:5;--depth:3;--top:8px;--bottom:14px;--inset:6px;--stroke:2px;--radius:32px;--fill:4%;--color:var(--l3);">
+              <div class="ring-label"><code>OPC-L3</code> A线稳定</div>
             </div>
-            <div class="ring" style="--start:1;--span:8;--depth:4;--top:0px;--bottom:0px;--inset:0px;--stroke:2px;--radius:38px;--fill:3%;--color:var(--l4);">
-              <div class="ring-label"><code>OPC-L4</code> AI业务增长型</div>
-            </div>
+            <div class="ring" data-variant="option" style="--start:1;--span:1;--depth:2;--top:10px;--bottom:18px;--inset:10px;--stroke:2px;--radius:22px;--fill:2%;--color:var(--l3);"></div>
+            <div class="ring" data-variant="option" style="--start:7;--span:1;--depth:2;--top:10px;--bottom:18px;--inset:10px;--stroke:2px;--radius:22px;--fill:2%;--color:var(--l3);"></div>
+            <div class="ring" data-variant="option" style="--start:8;--span:1;--depth:2;--top:10px;--bottom:18px;--inset:10px;--stroke:2px;--radius:22px;--fill:2%;--color:var(--l3);"></div>
+            <div class="ring-note">INS / OPS / BIZ 至少一个闭环方向</div>
           </div>
         </div>
       </div>
@@ -1629,7 +1709,7 @@
               <th>OPC 圈层</th>
               <th>圈定范围</th>
               <th>深度要求</th>
-              <th>一句话判断</th>
+              <th>定位口径</th>
             </tr>
           </thead>
           <tbody>
@@ -1637,25 +1717,25 @@
               <td><strong>OPC-L1</strong></td>
               <td>INS / A1 / A2 / A3</td>
               <td>INS/A1 到 L2，A2/A3 到 L1</td>
-              <td>能把 AI 产物结构化，进入可评审初稿。</td>
+              <td>结构化执行型：能把 AI 产物结构化，进入可评审初稿。</td>
             </tr>
             <tr>
               <td><strong>OPC-L2</strong></td>
-              <td>INS 到 A5，触达 OPS/BIZ</td>
+              <td>INS 到 A5，基础触达 OPS/BIZ</td>
               <td>A2/A3 到 L2-L3，A4 到 L1-L2，A5 到 L1</td>
-              <td>能交付 PRD、业务 Demo、评审材料和基础验收。</td>
+              <td>产品交付型：能交付 PRD、业务 Demo、评审材料和基础验收，可具备基础数据洞察或外部用户输入能力。</td>
             </tr>
             <tr>
               <td><strong>OPC-L3</strong></td>
-              <td>INS 到 BIZ 完整链路</td>
-              <td>A2-A4 到 L3，A5 必须到 L2，OPS/BIZ 到 L1-L2</td>
-              <td>能完成静态部署，沉淀 SOP、模板、Rubric，并带动团队复用。</td>
+              <td>A 线稳定 + INS / OPS / BIZ 至少一个闭环方向</td>
+              <td>A2-A4 到 L3，A5 必须到 L2，INS/OPS/BIZ 至少一项到 L2-L3</td>
+              <td>工作流负责型：A 线交付稳定，能沉淀 SOP、模板、Rubric，并在至少一个闭环方向做深。</td>
             </tr>
             <tr>
               <td><strong>OPC-L4</strong></td>
-              <td>INS 到 BIZ 完整链路</td>
+              <td>INS 到 BIZ 完整增长闭环</td>
               <td>A5 必须到 L3，OPS/BIZ 到 L3</td>
-              <td>能打通联调部署、Agent 修复、用户运营和客户转化。</td>
+              <td>业务增长型：能打通 AI 交付、Agent 修复、用户运营、客户反馈和指标增长。</td>
             </tr>
           </tbody>
         </table>
@@ -1693,8 +1773,8 @@
         title: "INS｜洞察定义 L1-L3 能力标准",
         rows: [
           ["L1｜信息吸收", "能用 AI 摘要访谈、调研、会议和反馈材料，提取背景、关键词和待确认点。", "能快速看懂材料，把零散输入整理成可继续讨论的线索。"],
-          ["L2｜场景还原", "能用 AI 串起用户、场景、痛点、目标和约束，分清现象、根因和假设。", "能说清谁在什么场景里遇到什么问题，以及问题为什么发生。"],
-          ["L3｜需求定界", "能用 AI 辅助做证据整理、客群拆分和机会判断，输出问题定义、价值判断和优先级依据。", "能把需求从想法拉回到边界清晰、可以推进的定义上。"]
+          ["L2｜场景还原与负责域数据分析", "能用 AI 串起用户、场景、痛点、目标和约束，并分析自己负责范围内的核心数据、异常变化和用户反馈。", "能说清谁在什么场景里遇到什么问题，并从负责域数据中发现问题线索和初步改进方向。"],
+          ["L3｜北极星指标与系统洞察", "能用 AI 辅助做证据整理、客群拆分、机会判断和指标分析，从多类数据和业务目标中识别关键指标或北极星指标。", "能判断真正影响业务的问题，输出有证据支撑的改进发现和优先级依据。"]
         ]
       },
       A1: {
@@ -1740,8 +1820,8 @@
         title: "OPS｜2C 用户运营 L1-L3 能力标准",
         rows: [
           ["L1｜目标拆解", "能把上线目标拆成用户、体验、增长、留存或收入指标。", "能说清这次需求到底要改善什么，以及怎么判断有效。"],
-          ["L2｜运营方案", "能用 AI 设计触达、内容、活动或实验路径，形成可执行动作。", "能输出人群、触达、节奏、衡量口径和预期结果。"],
-          ["L3｜复盘优化", "能用 AI 分析数据和反馈，判断策略效果并迭代下一轮方案。", "能把一次上线变成持续优化的闭环，而不是一次性动作。"]
+          ["L2｜运营方案与外部用户发现", "能用 AI 设计触达、内容、活动或实验路径，并在外部平台找到潜在种子用户，完成基础沟通、需求收集和反馈整理。", "能输出人群、触达、节奏、衡量口径和预期结果，也能把外部用户输入整理成可判断的运营线索。"],
+          ["L3｜种子用户共创与运营闭环", "能持续经营种子用户关系，组织交流和共创，用 AI 分析数据和反馈，判断策略效果并迭代下一轮方案。", "能把用户反馈转化为运营策略、实验方案或产品迭代输入，让一次上线进入持续优化闭环。"]
         ]
       },
       BIZ: {

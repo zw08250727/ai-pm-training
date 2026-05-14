@@ -1,0 +1,544 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AI2C产品组 opc训练机制</title>
+  <style>
+    :root {
+      --ink: #172033;
+      --muted: #6b7688;
+      --line: #dbe5f1;
+      --paper: #f5f8fc;
+      --panel: rgba(255,255,255,.9);
+      --ins: #2b82d9;
+      --pm: #1d927c;
+      --ops: #7f67d9;
+      --biz: #c16a2b;
+      --l1: #4f8dca;
+      --l2: #55a870;
+      --l3: #d89423;
+      --l4: #d95b52;
+      --shadow: 0 16px 42px rgba(56, 74, 105, .10);
+      --mono: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+      --sans: "Avenir Next", "PingFang SC", "Microsoft YaHei", sans-serif;
+      --serif: Georgia, "Songti SC", "STSong", serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 16% 8%, rgba(43, 130, 217, .12), transparent 28%),
+        radial-gradient(circle at 86% 0%, rgba(29, 146, 124, .10), transparent 26%),
+        linear-gradient(90deg, rgba(71,101,139,.055) 1px, transparent 1px) 0 0 / 32px 32px,
+        linear-gradient(0deg, rgba(71,101,139,.045) 1px, transparent 1px) 0 0 / 32px 32px,
+        var(--paper);
+      font-family: var(--sans);
+      letter-spacing: 0;
+    }
+
+    .shell {
+      width: min(1440px, calc(100vw - 40px));
+      margin: 0 auto;
+      padding: 28px 0 56px;
+    }
+
+    header {
+      padding: 22px 0 24px;
+    }
+
+    .page-title {
+      background:
+        linear-gradient(135deg, rgba(255,255,255,.94), rgba(238,247,255,.88)),
+        linear-gradient(90deg, rgba(43,130,217,.15), rgba(29,146,124,.10));
+      padding: 28px 32px;
+      border: 1px solid rgba(171, 190, 215, .72);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .page-title:after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(110deg, transparent 0 46%, rgba(43,130,217,.08) 46% 47%, transparent 47%),
+        repeating-linear-gradient(90deg, rgba(43,130,217,.055) 0 1px, transparent 1px 38px);
+      pointer-events: none;
+    }
+
+    .kicker {
+      color: var(--ins);
+      font: 800 12px/1 var(--mono);
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      position: relative;
+    }
+
+    .page-title h1 {
+      margin: 8px 0 0;
+      max-width: 1060px;
+      font-family: var(--serif);
+      font-size: clamp(34px, 5vw, 68px);
+      line-height: 1;
+      position: relative;
+    }
+
+    .page-title p {
+      margin: 16px 0 0;
+      max-width: 980px;
+      color: var(--muted);
+      font-size: 16px;
+      line-height: 1.7;
+      font-weight: 700;
+      position: relative;
+    }
+
+    .section {
+      margin-top: 28px;
+      padding: 24px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(12px);
+    }
+
+    .section-head {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 20px;
+      padding-bottom: 14px;
+      margin-bottom: 20px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .section-head h2 {
+      margin: 0;
+      font-size: 24px;
+      line-height: 1.25;
+    }
+
+    .section-head p {
+      margin: 0;
+      max-width: 780px;
+      color: var(--muted);
+      line-height: 1.65;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .axis-shell {
+      overflow-x: auto;
+      padding: 8px 0 2px;
+    }
+
+    .axis-board {
+      --axis-w: 132px;
+      --cell-w: 136px;
+      --cell-h: 78px;
+      position: relative;
+      min-width: calc(var(--axis-w) + var(--cell-w) * 8);
+      width: max-content;
+      padding-top: 48px;
+    }
+
+    .axis-grid {
+      display: grid;
+      grid-template-columns: var(--axis-w) repeat(8, var(--cell-w));
+      grid-template-rows: repeat(4, var(--cell-h)) 92px;
+      border-left: 1px solid #b9cbe5;
+      border-top: 1px solid #b9cbe5;
+      background: rgba(255,255,255,.82);
+      position: relative;
+      z-index: 1;
+    }
+
+    .depth-label {
+      display: grid;
+      place-items: center;
+      gap: 8px;
+      padding: 12px;
+      border-right: 1px solid #b9cbe5;
+      border-bottom: 1px solid #d7e3f3;
+      background: linear-gradient(135deg, rgba(43,130,217,.10), rgba(29,146,124,.05));
+      text-align: center;
+    }
+
+    .depth-label b {
+      font: 900 28px/1 var(--mono);
+    }
+
+    .depth-label span {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 900;
+    }
+
+    .grid-cell {
+      border-right: 1px solid #d7e3f3;
+      border-bottom: 1px solid #d7e3f3;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.88), rgba(248,251,255,.72));
+      position: relative;
+    }
+
+    .grid-cell[data-zone="opsbiz"]:after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: rgba(193, 106, 43, .055);
+    }
+
+    .origin {
+      display: grid;
+      place-items: center;
+      padding: 12px;
+      border-right: 1px solid #b9cbe5;
+      border-bottom: 1px solid #b9cbe5;
+      color: white;
+      background: linear-gradient(135deg, #2b82d9, #1d927c);
+      font: 900 15px/1.3 var(--sans);
+      text-align: center;
+    }
+
+    .capability {
+      display: grid;
+      place-items: center;
+      align-content: center;
+      gap: 8px;
+      padding: 12px 8px;
+      border-right: 1px solid #d7e3f3;
+      border-bottom: 1px solid #b9cbe5;
+      background: white;
+      text-align: center;
+    }
+
+    .capability b {
+      display: inline-grid;
+      place-items: center;
+      min-width: 52px;
+      height: 34px;
+      padding: 0 10px;
+      border-radius: 7px;
+      color: white;
+      background: var(--cap-color);
+      font: 900 15px/1 var(--mono);
+      box-shadow: 0 8px 18px color-mix(in srgb, var(--cap-color) 18%, transparent);
+    }
+
+    .capability span {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.25;
+      font-weight: 900;
+    }
+
+    .rings {
+      position: absolute;
+      left: var(--axis-w);
+      top: 48px;
+      width: calc(var(--cell-w) * 8);
+      height: calc(var(--cell-h) * 4);
+      pointer-events: none;
+      z-index: 5;
+    }
+
+    .ring {
+      position: absolute;
+      left: calc((var(--start) - 1) * var(--cell-w) + var(--inset));
+      top: calc((4 - var(--depth)) * var(--cell-h) + var(--top));
+      width: calc(var(--span) * var(--cell-w) - var(--inset) * 2);
+      height: calc(var(--depth) * var(--cell-h) - var(--top) - var(--bottom));
+      border: var(--stroke) solid var(--color);
+      border-radius: var(--radius);
+      background: color-mix(in srgb, var(--color) var(--fill), transparent);
+      box-shadow: 0 10px 24px color-mix(in srgb, var(--color) 10%, transparent);
+    }
+
+    .ring:before {
+      content: "";
+      position: absolute;
+      inset: 10px;
+      border: 1px dashed color-mix(in srgb, var(--color) 28%, transparent);
+      border-radius: calc(var(--radius) - 10px);
+    }
+
+    .ring-label {
+      position: absolute;
+      left: 18px;
+      top: -22px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 13px;
+      color: white;
+      background: var(--color);
+      border-radius: 999px;
+      box-shadow: 0 8px 18px color-mix(in srgb, var(--color) 18%, transparent);
+      white-space: nowrap;
+      font: 900 14px/1 var(--sans);
+    }
+
+    .ring-label code {
+      color: white;
+      font: 900 13px/1 var(--mono);
+    }
+
+    .coverage-table {
+      margin-top: 20px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      overflow: hidden;
+      background: white;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    th, td {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--line);
+      border-right: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+      line-height: 1.55;
+    }
+
+    th {
+      background: #eef6fb;
+      color: #30405a;
+      font-weight: 900;
+    }
+
+    tr:last-child td { border-bottom: 0; }
+    th:last-child, td:last-child { border-right: 0; }
+
+    .level-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .level-card {
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255,255,255,.92);
+      box-shadow: 0 10px 26px rgba(56,74,105,.06);
+    }
+
+    .level-card h3 {
+      margin: 0 0 10px;
+      color: var(--color);
+      font-size: 20px;
+      line-height: 1.25;
+    }
+
+    .level-card p {
+      margin: 0 0 12px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.65;
+      font-weight: 800;
+    }
+
+    .level-card ul {
+      margin: 0;
+      padding-left: 18px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.65;
+      font-weight: 750;
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-top: 14px;
+    }
+
+    .task-card {
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255,255,255,.92);
+    }
+
+    .task-card h3 {
+      margin: 0 0 12px;
+      font-size: 18px;
+    }
+
+    .footer-note {
+      margin-top: 18px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.65;
+      font-weight: 800;
+    }
+
+    .hub-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin: 0 0 16px;
+      padding: 9px 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255,255,255,.86);
+      color: var(--ink);
+      font: 800 13px/1 var(--sans);
+      text-decoration: none;
+      box-shadow: 0 8px 22px rgba(56, 74, 105, .08);
+    }
+
+    .hub-back:hover {
+      border-color: rgba(43,130,217,.42);
+      color: var(--ins);
+    }
+
+    @media (max-width: 1100px) {
+      .level-grid { grid-template-columns: repeat(2, 1fr); }
+      .two-col { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 720px) {
+      .shell { width: min(100vw - 24px, 1440px); padding-top: 12px; }
+      .page-title, .section { padding: 18px; }
+      .section-head { display: block; }
+      .section-head p { margin-top: 10px; }
+      .level-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <a class="hub-back" href="./index.html">← 返回 AI PM Hub</a>
+    <header>
+      <section class="page-title">
+        <div class="kicker">OPC Training Mechanism · AI2C Product Team</div>
+        <h1>AI2C产品组 opc训练机制</h1>
+        <p>保留分层标准、训练任务和训练机制建议，用真实需求承接 OPC 能力训练落地。</p>
+      </section>
+    </header>
+
+<section class="section">
+      <div class="section-head">
+        <h2>1. 分层标准与训练任务</h2>
+        <p>培训中建议每个层级只抓最关键的训练动作，避免标准过散。每个任务都要有可验收产物。</p>
+      </div>
+
+      <div class="two-col">
+        <article class="task-card">
+          <h3>OPC-L1｜结构化执行训练</h3>
+          <table>
+            <thead><tr><th>任务</th><th>标准</th></tr></thead>
+            <tbody>
+              <tr><td>竞品分析</td><td>输出统一维度表格，包含我方应学习、应避免、一期机会点。</td></tr>
+              <tr><td>用户反馈归纳</td><td>区分用户原话和 AI 推测，输出 P0/P1/P2 优先级。</td></tr>
+              <tr><td>PRD 初稿</td><td>包含背景、目标、范围、不做范围、流程、字段、状态、验收。</td></tr>
+              <tr><td>质量检查</td><td>输出严重问题、一般问题、可交付部分、不建议交付部分。</td></tr>
+            </tbody>
+          </table>
+        </article>
+
+        <article class="task-card">
+          <h3>OPC-L2｜产品交付训练</h3>
+          <table>
+            <thead><tr><th>任务</th><th>标准</th></tr></thead>
+            <tbody>
+              <tr><td>方案辩论</td><td>让 AI 从用户、业务、研发、测试、运营视角挑战方案。</td></tr>
+              <tr><td>PRD 生成</td><td>产物能支撑研发评审，字段、状态、异常、验收清晰。</td></tr>
+              <tr><td>业务 Demo 生成</td><td>能还原主流程、关键字段、业务状态和 mock 数据。</td></tr>
+              <tr><td>AI 验收清单</td><td>覆盖主流程、异常流程、权限、数据和体验问题，满足 A5-L1。</td></tr>
+            </tbody>
+          </table>
+        </article>
+
+        <article class="task-card">
+          <h3>OPC-L3｜工作流复用训练</h3>
+          <table>
+            <thead><tr><th>任务</th><th>标准</th></tr></thead>
+            <tbody>
+              <tr><td>建提示词模板</td><td>一个高频场景沉淀背景、输入、任务、输出格式、验收标准。</td></tr>
+              <tr><td>建产物 Rubric</td><td>能判断 AI 产物是否完整、准确、可交付。</td></tr>
+              <tr><td>静态 Demo 部署</td><td>能通过 AI 工具完成不依赖业务服务的静态 Demo 部署，满足 A5-L2。</td></tr>
+              <tr><td>建工作目录</td><td>同类任务有固定资料区、输出区、复盘区。</td></tr>
+            </tbody>
+          </table>
+        </article>
+
+        <article class="task-card">
+          <h3>OPC-L4｜业务增长训练</h3>
+          <table>
+            <thead><tr><th>任务</th><th>标准</th></tr></thead>
+            <tbody>
+              <tr><td>客户诊断</td><td>输出客户行业、角色、流程、痛点、目标和产品切入点。</td></tr>
+              <tr><td>解决方案包装</td><td>输出客户现状、问题、解决路径、能力映射、价值收益、边界。</td></tr>
+              <tr><td>联调与 Agent 修复</td><td>能完成依赖业务服务的联调部署，并通过 Agent 修复体验问题，满足 A5-L3。</td></tr>
+              <tr><td>演示脚本</td><td>按客户场景组织 Demo 路径，包含讲解话术和关键截图。</td></tr>
+            </tbody>
+          </table>
+        </article>
+      </div>
+    </section>
+
+<section class="section">
+      <div class="section-head">
+        <h2>2. 训练机制建议</h2>
+        <p>用真实需求训练，不做脱离业务的 AI 演示。训练机制先按动作和主题沉淀，具体节奏可在团队排期明确后再配置。</p>
+      </div>
+      <div class="coverage-table">
+        <table>
+          <thead>
+            <tr><th>训练动作</th><th>对应能力</th><th>输出</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>选择一个真实需求，用 AI 做资料摘要和问题拆解</td><td>INS / A1</td><td>需求理解卡</td></tr>
+            <tr><td>用 AI 做方案推演和多角色评审</td><td>A2</td><td>方案对比表、风险清单</td></tr>
+            <tr><td>用 AI 生成 PRD、流程、字段、验收标准</td><td>A3</td><td>PRD 初稿、评审材料</td></tr>
+            <tr><td>用 AI 生成 Demo 或验收清单</td><td>A4 / A5</td><td>Demo、验收清单</td></tr>
+            <tr><td>复盘 AI 使用效果，沉淀模板和提示词</td><td>L3 工作流</td><td>复盘记录、提示词模板</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="coverage-table">
+        <table>
+          <thead>
+            <tr><th>训练主题</th><th>目标</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>结构化提示词与需求理解</td><td>所有人达到 OPC-L1 基础要求</td></tr>
+            <tr><td>资料整理、反馈归纳、PRD 初稿</td><td>稳定形成结构化 AI 产物</td></tr>
+            <tr><td>方案推演与 AI 辩论</td><td>提升 A2 方案判断能力</td></tr>
+            <tr><td>Demo 生成与评审材料</td><td>推动 OPC-L1 向 OPC-L2 升级</td></tr>
+            <tr><td>验收清单与 Agent 修复</td><td>建立 A5 闭环意识</td></tr>
+            <tr><td>SOP、Rubric、案例沉淀</td><td>推动 OPC-L2 向 OPC-L3 升级</td></tr>
+            <tr><td>运营方案与数据复盘</td><td>补齐 OPS 能力</td></tr>
+            <tr><td>客户方案与商业转化</td><td>补齐 BIZ 能力</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p class="footer-note">最终目标：产品经理能用 AI 看懂问题、推演方案、产出 PRD、交付 Demo、完成验收与 Agent 修复，并进一步承接用户运营和客户商业转化。</p>
+    </section>
+
+    <footer>
+      AI PM Hub · OPC 的训练机制<br />
+      说明：本页面是单文件 HTML；训练任务和机制内容来自原「产品组OPC能力层级与训练机制-可视化」页面。
+    </footer>
+  </main>
+</body>
+</html>
